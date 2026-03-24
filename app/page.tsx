@@ -87,7 +87,7 @@ export default function Home() {
         </Container>
       </section>
 
-      <section className="py-14 md:py-20">
+      <section id="why" className="py-14 md:py-20">
         <Container>
           <div className="grid gap-4 md:grid-cols-2 md:gap-6">
             <BenefitList title="For attendees" points={attendeePoints} />
@@ -120,7 +120,7 @@ export default function Home() {
         </Container>
       </section>
 
-      <section className="border-t border-border/70 py-14 md:py-20">
+      <section id="faq" className="border-t border-border/70 py-14 md:py-20">
         <Container>
           <div className="mx-auto grid max-w-4xl gap-6">
             <h2 className="font-heading text-2xl font-semibold tracking-tight md:text-3xl">

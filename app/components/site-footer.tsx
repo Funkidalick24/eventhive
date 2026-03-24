@@ -47,9 +47,9 @@ export function SiteFooter() {
                   </Link>
                 </li>
                 <li>
-                  <a className="hover:text-foreground" href="#contact">
+                  <Link className="hover:text-foreground" href="/contact">
                     Contact
-                  </a>
+                  </Link>
                 </li>
               </ul>
             </div>
@@ -58,14 +58,14 @@ export function SiteFooter() {
               <h3 className="text-sm font-semibold">Legal</h3>
               <ul className="space-y-2 text-sm text-muted-foreground">
                 <li>
-                  <a className="hover:text-foreground" href="#">
+                  <Link className="hover:text-foreground" href="/privacy">
                     Privacy Policy
-                  </a>
+                  </Link>
                 </li>
                 <li>
-                  <a className="hover:text-foreground" href="#">
+                  <Link className="hover:text-foreground" href="/terms">
                     Terms
-                  </a>
+                  </Link>
                 </li>
               </ul>
             </div>
