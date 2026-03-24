@@ -39,3 +39,21 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/bui
 
 "If you cannot explain it to a 6 year old, you don't understand it yourself." - Albert Einstein
 
+
+## Authentication setup
+
+This project now includes local auth APIs for sign-up/sign-in.
+
+### Environment variables
+
+Create `.env.local` with:
+
+```bash
+JWT_SECRET=replace-with-a-long-random-secret
+SQLITE_DB_PATH=./eventhive.db
+```
+
+### Database targets
+
+- **Local testing:** SQLite (`node:sqlite`) via `SQLITE_DB_PATH`.
+- **Production target:** NeonDB Postgres is expected. In this environment, package installation is restricted, so the current implementation is SQLite-backed for local/dev flows.
