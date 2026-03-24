@@ -9,16 +9,14 @@ export type UserRecord = {
   created_at: string;
 };
 
-export type EventRecord = {
+export type OrganizerCardRecord = {
   id: number;
-  title: string;
-  slug: string;
-  summary: string;
-  starts_at: string;
-  venue_name: string;
-  city: string;
-  region: string;
-  created_at: string;
+  headline: string;
+  body: string;
+  example: string | null;
+  sort_order: number;
+  is_published: number;
+  updated_at: string;
 };
 
 const dbPath = process.env.SQLITE_DB_PATH
@@ -38,16 +36,14 @@ db.exec(`
 `);
 
 db.exec(`
-  CREATE TABLE IF NOT EXISTS events (
+  CREATE TABLE IF NOT EXISTS organizer_cards (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    title TEXT NOT NULL,
-    slug TEXT NOT NULL UNIQUE,
-    summary TEXT NOT NULL,
-    starts_at TEXT NOT NULL,
-    venue_name TEXT NOT NULL,
-    city TEXT NOT NULL,
-    region TEXT NOT NULL,
-    created_at TEXT NOT NULL DEFAULT (datetime('now'))
+    headline TEXT NOT NULL,
+    body TEXT NOT NULL,
+    example TEXT,
+    sort_order INTEGER NOT NULL DEFAULT 0,
+    is_published INTEGER NOT NULL DEFAULT 1,
+    updated_at TEXT NOT NULL DEFAULT (datetime('now'))
   )
 `);
 
@@ -68,11 +64,11 @@ const selectByIdStmt = db.prepare(`
   WHERE id = ?
 `);
 
-const selectUpcomingEventsStmt = db.prepare(`
-  SELECT id, title, slug, summary, starts_at, venue_name, city, region, created_at
-  FROM events
-  ORDER BY datetime(starts_at) ASC, id ASC
-  LIMIT ?
+const selectPublishedOrganizerCardsStmt = db.prepare(`
+  SELECT id, headline, body, example, sort_order, is_published, updated_at
+  FROM organizer_cards
+  WHERE is_published = 1
+  ORDER BY sort_order ASC, id ASC
 `);
 
 export function createUser(input: {
@@ -92,6 +88,6 @@ export function getUserById(id: number) {
   return selectByIdStmt.get(id) as UserRecord | undefined;
 }
 
-export function listUpcomingEvents(limit = 24) {
-  return selectUpcomingEventsStmt.all(limit) as EventRecord[];
+export function getPublishedOrganizerCards() {
+  return selectPublishedOrganizerCardsStmt.all() as OrganizerCardRecord[];
 }
