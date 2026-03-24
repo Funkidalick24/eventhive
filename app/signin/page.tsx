@@ -27,6 +27,7 @@ function RegisteredNotice() {
 
 export default function SigninPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
@@ -49,10 +50,16 @@ export default function SigninPage() {
   }, []);
 
   useEffect(() => {
+    const role = searchParams.get("role");
+    const dashboardHref =
+      role === "organizer" || role === "attendee"
+        ? `/dashboard?role=${role}`
+        : "/dashboard";
+
     if (sessionUser) {
-      router.replace("/dashboard");
+      router.replace(dashboardHref);
     }
-  }, [router, sessionUser]);
+  }, [router, searchParams, sessionUser]);
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -88,7 +95,12 @@ export default function SigninPage() {
     form?.reset();
     setSubmitting(false);
     setMessage(null);
-    router.push("/dashboard");
+    const role = searchParams.get("role");
+    const dashboardHref =
+      role === "organizer" || role === "attendee"
+        ? `/dashboard?role=${role}`
+        : "/dashboard";
+    router.push(dashboardHref);
   }
 
   return (
