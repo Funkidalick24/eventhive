@@ -1,11 +1,9 @@
 import Link from "next/link";
 import { CalendarIcon } from "./icons";
 import { Container } from "./container";
-import { hrtime } from "process";
-import { isHmrRefresh } from "next/dist/server/app-render/work-unit-async-storage.external";
 
 const navLinks = [
- { href: "/", label: "Home" },
+  { href: "/", label: "Home" },
   { href: "/events", label: "Events" },
   { href: "/organizers", label: "Organizers" },
 ] as const;
@@ -36,15 +34,12 @@ export function SiteHeader() {
             ))}
           </nav>
 
-          <div className="flex items-center gap-2">
-           
-            <Link
-              href="/organizers"
-              className="inline-flex h-10 items-center rounded-full bg-primary px-4 text-sm font-semibold text-primary-foreground shadow-sm transition hover:brightness-95"
-            >
-              Start organizing
-            </Link>
-          </div>
+          <Link
+            href="/organizers"
+            className="inline-flex h-10 items-center rounded-full bg-primary px-4 text-sm font-semibold text-primary-foreground shadow-sm transition hover:brightness-95"
+          >
+            Start organizing
+          </Link>
         </div>
       </Container>
     </header>
