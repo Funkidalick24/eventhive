@@ -57,3 +57,10 @@ SQLITE_DB_PATH=./eventhive.db
 
 - **Local testing:** SQLite (`node:sqlite`) via `SQLITE_DB_PATH`.
 - **Production target:** NeonDB Postgres is expected. In this environment, package installation is restricted, so the current implementation is SQLite-backed for local/dev flows.
+
+## UI copy quality rules
+
+- Do not ship placeholder UI copy to any environment (including staging previews).
+- Forbidden placeholder examples include: `Lorem ipsum`, `Coming soon`, `TBD`, `TODO`, `Sample text`, and generic filler headings/body text.
+- Every new screen, component, and state (empty/loading/error/success) must contain intentional, user-facing copy that reflects real product behavior.
+- PRs should replace temporary copy before merge; if final wording is blocked, keep the change in draft and document the blocker in the PR description.
