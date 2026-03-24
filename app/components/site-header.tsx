@@ -6,8 +6,6 @@ const navLinks = [
   { href: "/", label: "Home" },
   { href: "/events", label: "Events" },
   { href: "/organizers", label: "Organizers" },
-  { href: "/signin", label: "Sign in" },
-  { href: "/signup", label: "Sign up" },
 ] as const;
 
 export function SiteHeader() {
@@ -37,10 +35,10 @@ export function SiteHeader() {
           </nav>
 
           <Link
-            href="/signup"
+            href="/signin"
             className="inline-flex h-10 items-center rounded-full bg-primary px-4 text-sm font-semibold text-primary-foreground shadow-sm transition hover:brightness-95"
           >
-            Create account
+            Login
           </Link>
         </div>
       </Container>

@@ -1,10 +1,12 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { FormEvent, useState } from "react";
 import { Container } from "../components/container";
 
 export default function SignupPage() {
+  const router = useRouter();
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
@@ -15,7 +17,8 @@ export default function SignupPage() {
     setMessage(null);
     setError(null);
 
-    const formData = new FormData(event.currentTarget);
+    const form = event.currentTarget;
+    const formData = new FormData(form);
     const payload = {
       name: String(formData.get("name") ?? ""),
       email: String(formData.get("email") ?? ""),
@@ -36,9 +39,10 @@ export default function SignupPage() {
       return;
     }
 
-    setMessage(data.message ?? "Registration successful.");
-    event.currentTarget.reset();
+    form?.reset();
     setSubmitting(false);
+    setMessage(null);
+    router.push("/signin?registered=1");
   }
 
   return (

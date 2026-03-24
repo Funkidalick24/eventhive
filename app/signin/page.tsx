@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { FormEvent, useEffect, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { FormEvent, Suspense, useEffect, useState } from "react";
 import { Container } from "../components/container";
 
 type SessionUser = {
@@ -10,7 +11,22 @@ type SessionUser = {
   email: string;
 };
 
+function RegisteredNotice() {
+  const searchParams = useSearchParams();
+
+  if (searchParams.get("registered") !== "1") {
+    return null;
+  }
+
+  return (
+    <p className="mt-4 rounded-lg bg-emerald-500/10 px-3 py-2 text-sm text-emerald-700">
+      Account created. Please sign in.
+    </p>
+  );
+}
+
 export default function SigninPage() {
+  const router = useRouter();
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
@@ -32,13 +48,20 @@ export default function SigninPage() {
       });
   }, []);
 
+  useEffect(() => {
+    if (sessionUser) {
+      router.replace("/dashboard");
+    }
+  }, [router, sessionUser]);
+
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setSubmitting(true);
     setMessage(null);
     setError(null);
 
-    const formData = new FormData(event.currentTarget);
+    const form = event.currentTarget;
+    const formData = new FormData(form);
     const payload = {
       email: String(formData.get("email") ?? ""),
       password: String(formData.get("password") ?? ""),
@@ -62,9 +85,10 @@ export default function SigninPage() {
     }
 
     setSessionUser(data.user ?? null);
-    setMessage(data.message ?? "Login successful.");
-    event.currentTarget.reset();
+    form?.reset();
     setSubmitting(false);
+    setMessage(null);
+    router.push("/dashboard");
   }
 
   return (
@@ -77,6 +101,10 @@ export default function SigninPage() {
           <p className="mt-2 text-sm text-muted-foreground">
             Access your account and events securely.
           </p>
+
+          <Suspense fallback={null}>
+            <RegisteredNotice />
+          </Suspense>
 
           <form className="mt-6 space-y-4" onSubmit={handleSubmit}>
             <label className="block space-y-2">
