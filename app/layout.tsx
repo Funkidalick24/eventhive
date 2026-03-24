@@ -20,8 +20,27 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "EventHive",
+  metadataBase: new URL("https://eventhive.app"),
+  title: {
+    default: "EventHive",
+    template: "%s | EventHive",
+  },
   description: "Discover events and manage your RSVPs in one place.",
+  alternates: {
+    canonical: "/",
+  },
+  openGraph: {
+    title: "EventHive",
+    description: "Discover events and manage your RSVPs in one place.",
+    url: "https://eventhive.app",
+    siteName: "EventHive",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "EventHive",
+    description: "Discover events and manage your RSVPs in one place.",
+  },
 };
 
 export default function RootLayout({
