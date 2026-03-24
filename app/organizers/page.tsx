@@ -1,7 +1,10 @@
 import Link from "next/link";
 import { Container } from "../components/container";
+import { getPublishedOrganizerCards } from "@/lib/db";
 
 export default function OrganizersPage() {
+  const organizerCards = getPublishedOrganizerCards();
+
   return (
     <main>
       <section className="border-b border-border/70 bg-muted/20 py-12 md:py-16">
@@ -66,27 +69,39 @@ export default function OrganizersPage() {
 
       <section className="py-12 md:py-16">
         <Container>
-          <div className="grid gap-6 lg:grid-cols-3">
-            {[
-              "Create your event page",
-              "Manage attendees and RSVPs",
-              "Keep attendees informed",
-            ].map((title) => (
-              <div
-                key={title}
-                className="rounded-2xl border border-border bg-card p-6 shadow-sm"
-              >
-                <h2 className="font-heading text-xl font-semibold tracking-tight">
-                  {title}
-                </h2>
-                <p className="mt-2 text-sm leading-6 text-muted-foreground">
-                  Placeholder content — replace with real organizer details and
-                  flows.
-                </p>
-                <div className="mt-5 h-10 w-36 rounded-full bg-muted/40" />
-              </div>
-            ))}
-          </div>
+          {organizerCards.length === 0 ? (
+            <div className="rounded-2xl border border-dashed border-border bg-muted/20 p-8 text-center shadow-sm">
+              <h2 className="font-heading text-xl font-semibold tracking-tight md:text-2xl">
+                Organizer content coming soon
+              </h2>
+              <p className="mx-auto mt-2 max-w-2xl text-sm leading-6 text-muted-foreground">
+                No organizer cards are published yet. Add headline, body, and
+                optional example content in your CMS or database to populate
+                this section.
+              </p>
+            </div>
+          ) : (
+            <div className="grid gap-6 lg:grid-cols-3">
+              {organizerCards.map((card) => (
+                <article
+                  key={card.id}
+                  className="rounded-2xl border border-border bg-card p-6 shadow-sm"
+                >
+                  <h2 className="font-heading text-xl font-semibold tracking-tight">
+                    {card.headline}
+                  </h2>
+                  <p className="mt-2 text-sm leading-6 text-muted-foreground">
+                    {card.body}
+                  </p>
+                  {card.example ? (
+                    <p className="mt-4 rounded-xl bg-muted/35 px-4 py-3 text-sm text-foreground/90">
+                      Example: {card.example}
+                    </p>
+                  ) : null}
+                </article>
+              ))}
+            </div>
+          )}
         </Container>
       </section>
     </main>

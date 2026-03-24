@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { listUpcomingEvents } from "@/lib/db";
 import { Container } from "../components/container";
 
 type UserRole = "attendee" | "organizer";

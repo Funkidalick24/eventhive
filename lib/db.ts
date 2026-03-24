@@ -9,6 +9,16 @@ export type UserRecord = {
   created_at: string;
 };
 
+export type OrganizerCardRecord = {
+  id: number;
+  headline: string;
+  body: string;
+  example: string | null;
+  sort_order: number;
+  is_published: number;
+  updated_at: string;
+};
+
 const dbPath = process.env.SQLITE_DB_PATH
   ? path.resolve(process.env.SQLITE_DB_PATH)
   : path.resolve(process.cwd(), "eventhive.db");
@@ -22,6 +32,18 @@ db.exec(`
     email TEXT NOT NULL UNIQUE,
     password_hash TEXT NOT NULL,
     created_at TEXT NOT NULL DEFAULT (datetime('now'))
+  )
+`);
+
+db.exec(`
+  CREATE TABLE IF NOT EXISTS organizer_cards (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    headline TEXT NOT NULL,
+    body TEXT NOT NULL,
+    example TEXT,
+    sort_order INTEGER NOT NULL DEFAULT 0,
+    is_published INTEGER NOT NULL DEFAULT 1,
+    updated_at TEXT NOT NULL DEFAULT (datetime('now'))
   )
 `);
 
@@ -42,6 +64,13 @@ const selectByIdStmt = db.prepare(`
   WHERE id = ?
 `);
 
+const selectPublishedOrganizerCardsStmt = db.prepare(`
+  SELECT id, headline, body, example, sort_order, is_published, updated_at
+  FROM organizer_cards
+  WHERE is_published = 1
+  ORDER BY sort_order ASC, id ASC
+`);
+
 export function createUser(input: {
   name: string;
   email: string;
@@ -57,4 +86,8 @@ export function getUserByEmail(email: string) {
 
 export function getUserById(id: number) {
   return selectByIdStmt.get(id) as UserRecord | undefined;
+}
+
+export function getPublishedOrganizerCards() {
+  return selectPublishedOrganizerCardsStmt.all() as OrganizerCardRecord[];
 }
