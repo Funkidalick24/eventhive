@@ -6,8 +6,17 @@ import { getUserById } from "@/lib/db";
 import { Container } from "../components/container";
 
 const SESSION_COOKIE = "eventhive_session";
+type UserRole = "attendee" | "organizer";
 
-export default async function DashboardPage() {
+function getRoleFromQuery(roleParam?: string): UserRole {
+  return roleParam === "organizer" ? "organizer" : "attendee";
+}
+
+export default async function DashboardPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ role?: string }>;
+}) {
   const cookieStore = await cookies();
   const token = cookieStore.get(SESSION_COOKIE)?.value;
 
@@ -27,6 +36,11 @@ export default async function DashboardPage() {
     redirect("/signin");
   }
 
+  const params = await searchParams;
+  const role = getRoleFromQuery(params.role);
+  const isOrganizer = role === "organizer";
+  const eventsHref = `/events?role=${role}`;
+
   return (
     <main className="py-14 md:py-20">
       <Container>
@@ -39,25 +53,51 @@ export default async function DashboardPage() {
             <p className="mt-2 text-sm text-muted-foreground md:text-base">
               Signed in as {user.email}.
             </p>
+            <p className="mt-4 inline-flex rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.14em] text-primary">
+              {isOrganizer ? "Organizer view" : "Attendee view"}
+            </p>
           </header>
 
           <section className="rounded-2xl border border-border bg-card p-6 md:p-8">
             <h2 className="font-heading text-xl font-semibold tracking-tight">
-              Quick links
+              No dashboard data yet
             </h2>
-            <div className="mt-4 flex flex-wrap gap-3">
-              <Link
-                href="/events"
-                className="inline-flex h-10 items-center rounded-full border border-border bg-background px-4 text-sm font-semibold transition hover:bg-muted"
-              >
-                Browse events
-              </Link>
-              <Link
-                href="/organizers"
-                className="inline-flex h-10 items-center rounded-full border border-border bg-background px-4 text-sm font-semibold transition hover:bg-muted"
-              >
-                Organizer info
-              </Link>
+            <p className="mt-2 text-sm text-muted-foreground md:text-base">
+              We’ll show your recent activity here once you start{" "}
+              {isOrganizer ? "publishing events." : "saving and RSVPing events."}
+            </p>
+            <div className="mt-5 grid gap-3 sm:grid-cols-2">
+              {isOrganizer ? (
+                <>
+                  <Link
+                    href="/organizers"
+                    className="inline-flex h-10 items-center justify-center rounded-full bg-primary px-4 text-sm font-semibold text-primary-foreground transition hover:brightness-95"
+                  >
+                    Review organizer workflow
+                  </Link>
+                  <Link
+                    href={eventsHref}
+                    className="inline-flex h-10 items-center justify-center rounded-full border border-border bg-background px-4 text-sm font-semibold transition hover:bg-muted"
+                  >
+                    Preview event listings
+                  </Link>
+                </>
+              ) : (
+                <>
+                  <Link
+                    href={eventsHref}
+                    className="inline-flex h-10 items-center justify-center rounded-full bg-primary px-4 text-sm font-semibold text-primary-foreground transition hover:brightness-95"
+                  >
+                    Browse events
+                  </Link>
+                  <Link
+                    href="/organizers"
+                    className="inline-flex h-10 items-center justify-center rounded-full border border-border bg-background px-4 text-sm font-semibold transition hover:bg-muted"
+                  >
+                    Learn organizer tools
+                  </Link>
+                </>
+              )}
             </div>
           </section>
         </div>

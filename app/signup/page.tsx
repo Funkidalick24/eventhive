@@ -24,6 +24,7 @@ export default function SignupPage() {
       email: String(formData.get("email") ?? ""),
       password: String(formData.get("password") ?? ""),
     };
+    const role = String(formData.get("role") ?? "attendee");
 
     const response = await fetch("/api/auth/register", {
       method: "POST",
@@ -42,7 +43,7 @@ export default function SignupPage() {
     form?.reset();
     setSubmitting(false);
     setMessage(null);
-    router.push("/signin?registered=1");
+    router.push(`/signin?registered=1&role=${encodeURIComponent(role)}`);
   }
 
   return (
@@ -88,6 +89,18 @@ export default function SignupPage() {
               <span className="text-xs text-muted-foreground">
                 Minimum 8 characters.
               </span>
+            </label>
+
+            <label className="block space-y-2">
+              <span className="text-sm font-medium">I plan to</span>
+              <select
+                name="role"
+                defaultValue="attendee"
+                className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm"
+              >
+                <option value="attendee">Attend events</option>
+                <option value="organizer">Organize events</option>
+              </select>
             </label>
 
             <button
