@@ -6,6 +6,7 @@ declare module "node:sqlite" {
   type PreparedStatement = {
     run: (...params: unknown[]) => StatementResult;
     get: (...params: unknown[]) => unknown;
+    all: (...params: unknown[]) => unknown[];
   };
 
   export class DatabaseSync {
@@ -14,4 +15,3 @@ declare module "node:sqlite" {
     prepare: (sql: string) => PreparedStatement;
   }
 }
-
