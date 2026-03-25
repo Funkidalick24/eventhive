@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 
 const SESSION_COOKIE = "eventhive_session";
 
-export async function GET(request: Request) {
+function buildLogoutResponse(request: Request) {
   const response = NextResponse.redirect(new URL("/", request.url));
 
   response.cookies.set({
@@ -18,3 +18,10 @@ export async function GET(request: Request) {
   return response;
 }
 
+export async function GET(request: Request) {
+  return buildLogoutResponse(request);
+}
+
+export async function POST(request: Request) {
+  return buildLogoutResponse(request);
+}

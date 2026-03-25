@@ -23,6 +23,21 @@
 # misc
 .DS_Store
 *.pem
+Thumbs.db
+Desktop.ini
+*.log
+.eslintcache
+.turbo
+.vscode
+.idea
+*.swp
+*.swo
+
+# local databases
+*.db
+*.sqlite
+*.sqlite3
+*.db-journal
 
 # debug
 npm-debug.log*
@@ -32,6 +47,8 @@ yarn-error.log*
 
 # env files (can opt-in for committing if needed)
 .env*
+!.env.example
+!.env.local.example
 
 # vercel
 .vercel

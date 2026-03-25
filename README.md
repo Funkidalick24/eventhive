@@ -51,6 +51,14 @@ Create `.env.local` with:
 ```bash
 JWT_SECRET=replace-with-a-long-random-secret
 SQLITE_DB_PATH=./eventhive.db
+GOOGLE_CLIENT_ID=replace-with-google-client-id
+GOOGLE_CLIENT_SECRET=replace-with-google-client-secret
+```
+
+Google OAuth redirect URL to add in your Google Cloud Console (local dev):
+
+```bash
+http://localhost:3000/api/auth/google/callback
 ```
 
 ### Database targets

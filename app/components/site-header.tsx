@@ -60,12 +60,14 @@ export async function SiteHeader() {
                 >
                   Dashboard
                 </Link>
-                <Link
-                  href="/api/auth/logout"
-                  className="block px-4 py-2 text-sm font-medium text-rose-600 transition hover:bg-muted"
-                >
-                  Logout
-                </Link>
+                <form action="/api/auth/logout" method="post">
+                  <button
+                    type="submit"
+                    className="block w-full px-4 py-2 text-left text-sm font-medium text-rose-600 transition hover:bg-muted"
+                  >
+                    Logout
+                  </button>
+                </form>
               </div>
             </details>
           ) : (
