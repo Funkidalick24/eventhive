@@ -60,11 +60,11 @@ export default async function DashboardPage({
 
           <section className="rounded-2xl border border-border bg-card p-6 md:p-8">
             <h2 className="font-heading text-xl font-semibold tracking-tight">
-              No dashboard data yet
+              Your activity
             </h2>
             <p className="mt-2 text-sm text-muted-foreground md:text-base">
-              We’ll show your recent activity here once you start{" "}
-              {isOrganizer ? "publishing events." : "saving and RSVPing events."}
+              Your upcoming events and recent activity will appear here once you start{" "}
+              {isOrganizer ? "publishing events." : "browsing and RSVPing to events."}
             </p>
             <div className="mt-5 grid gap-3 sm:grid-cols-2">
               {isOrganizer ? (

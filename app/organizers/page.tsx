@@ -72,12 +72,11 @@ export default function OrganizersPage() {
           {organizerCards.length === 0 ? (
             <div className="rounded-2xl border border-dashed border-border bg-muted/20 p-8 text-center shadow-sm">
               <h2 className="font-heading text-xl font-semibold tracking-tight md:text-2xl">
-                Organizer content coming soon
+                Start organizing your first event
               </h2>
               <p className="mx-auto mt-2 max-w-2xl text-sm leading-6 text-muted-foreground">
-                No organizer cards are published yet. Add headline, body, and
-                optional example content in your CMS or database to populate
-                this section.
+                Create an event to unlock organizer tools like guest management,
+                RSVP tracking, and task checklists.
               </p>
             </div>
           ) : (
