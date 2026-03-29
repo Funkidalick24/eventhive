@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Inter, Outfit, Geist_Mono } from "next/font/google";
+import Script from "next/script";
 import "./globals.css";
 import { SiteFooter } from "./components/site-footer";
 import { SiteHeader } from "./components/site-header";
@@ -49,10 +50,20 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body
         className={`${inter.variable} ${outfit.variable} ${geistMono.variable} min-h-dvh bg-background text-foreground antialiased`}
       >
+        <Script id="theme-init" strategy="beforeInteractive">
+          {`(() => {
+  try {
+    const theme = localStorage.getItem('theme');
+    if (theme === 'light' || theme === 'dark') {
+      document.documentElement.classList.add(theme);
+    }
+  } catch {}
+})();`}
+        </Script>
         <SiteHeader />
         {children}
         <SiteFooter />

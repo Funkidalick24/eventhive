@@ -14,7 +14,9 @@ Create `./.env.local`:
 
 ```bash
 JWT_SECRET=replace-with-a-long-random-secret
-SQLITE_DB_PATH=./eventhive.db
+
+# Prisma (Neon / Postgres)
+DATABASE_URL=postgresql://USER:PASSWORD@HOST:5432/DB?sslmode=require
 
 # Optional (enables Google sign-in)
 GOOGLE_CLIENT_ID=replace-with-google-client-id
@@ -30,6 +32,8 @@ http://localhost:3000/api/auth/google/callback
 ### Run locally (manual testing)
 
 ```bash
+pnpm db:migrate
+pnpm db:generate
 pnpm dev
 ```
 

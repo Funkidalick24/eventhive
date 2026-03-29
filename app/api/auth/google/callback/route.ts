@@ -1,7 +1,8 @@
 import { randomBytes } from "node:crypto";
 import { NextResponse } from "next/server";
 import { createJwt, hashPassword } from "@/lib/auth";
-import { createUser, getUserByEmail } from "@/lib/db";
+import { Prisma } from "@prisma/client";
+import { prisma } from "@/lib/prisma";
 import {
   decodeCookiePayload,
   getGoogleOAuthConfig,
@@ -100,19 +101,25 @@ export async function GET(request: Request) {
     return redirectToSigninWithError(origin, "email_not_verified");
   }
 
-  let user = getUserByEmail(email);
+  let user = await prisma.user.findUnique({ where: { email } });
 
   if (!user) {
     try {
-      createUser({
-        name,
-        email,
-        passwordHash: hashPassword(randomBytes(32).toString("hex")),
+      user = await prisma.user.create({
+        data: {
+          name,
+          email,
+          password_hash: hashPassword(randomBytes(32).toString("hex")),
+        },
       });
-    } catch {
-      // Likely a concurrent insert; fall through to lookup.
+    } catch (error) {
+      if (error instanceof Prisma.PrismaClientKnownRequestError) {
+        // Likely a concurrent insert; fall through to lookup.
+        user = await prisma.user.findUnique({ where: { email } });
+      } else {
+        throw error;
+      }
     }
-    user = getUserByEmail(email);
   }
 
   if (!user) {
@@ -144,4 +151,3 @@ export async function GET(request: Request) {
 
   return response;
 }
-

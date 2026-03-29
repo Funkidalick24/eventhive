@@ -2,56 +2,30 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import {
-  parseScheduleCardsForEditor,
-  ScheduleCard,
-  serializeScheduleCards,
-} from "@/lib/schedule";
+import { ScheduleCard, serializeScheduleCards } from "@/lib/schedule";
 
-type Props = {
-  eventId: number;
-  initialName: string;
-  initialDate: string;
-  initialTime: string;
-  initialLocation: string;
-  initialDescription: string;
-  initialSchedule: string;
-  cancelHref: string;
-};
-
-export function EditEventForm({
-  eventId,
-  initialName,
-  initialDate,
-  initialTime,
-  initialLocation,
-  initialDescription,
-  initialSchedule,
-  cancelHref,
-}: Props) {
+export function CreateEventForm({ cancelHref = "/dashboard/events" }: { cancelHref?: string }) {
   const router = useRouter();
-  const [name, setName] = useState(initialName);
-  const [date, setDate] = useState(initialDate);
-  const [time, setTime] = useState(initialTime);
-  const [location, setLocation] = useState(initialLocation);
-  const [description, setDescription] = useState(initialDescription);
-  const [scheduleCards, setScheduleCards] = useState<ScheduleCard[]>(() =>
-    parseScheduleCardsForEditor(initialSchedule)
-  );
+  const [name, setName] = useState("");
+  const [date, setDate] = useState("");
+  const [time, setTime] = useState("");
+  const [location, setLocation] = useState("");
+  const [description, setDescription] = useState("");
+  const [scheduleCards, setScheduleCards] = useState<ScheduleCard[]>([
+    { time: "", title: "", details: "" },
+  ]);
   const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
-    setSuccess(false);
     setLoading(true);
 
     try {
       const schedule = serializeScheduleCards(scheduleCards);
-      const res = await fetch(`/api/events/${eventId}`, {
-        method: "PUT",
+      const res = await fetch("/api/events", {
+        method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           name,
@@ -63,14 +37,20 @@ export function EditEventForm({
         }),
       });
 
-      const data = (await res.json()) as { error?: string };
+      const data = (await res.json()) as { id?: number; error?: string };
 
       if (!res.ok) {
-        setError(data.error ?? "Failed to update event.");
-      } else {
-        setSuccess(true);
-        router.refresh();
+        setError(data.error ?? "Failed to create event.");
+        return;
       }
+
+      if (!data.id) {
+        setError("Event created, but no ID was returned.");
+        return;
+      }
+
+      router.push(`/events/${data.id}`);
+      router.refresh();
     } catch {
       setError("Something went wrong. Please try again.");
     } finally {
@@ -172,7 +152,7 @@ export function EditEventForm({
       <div className="grid gap-1.5">
         <label className="text-sm font-medium">Schedule cards (optional)</label>
         <p className="text-xs text-muted-foreground">
-          Add time cards to display a clearer schedule on the event page.
+          Add time cards to make your schedule easier to scan on the event page.
         </p>
         <div className="grid gap-3">
           {scheduleCards.map((card, index) => (
@@ -259,24 +239,19 @@ export function EditEventForm({
         </p>
       )}
 
-      {success && (
-        <p className="rounded-lg bg-green-500/10 px-3 py-2 text-sm text-green-700 dark:text-green-400">
-          Event updated successfully!
-        </p>
-      )}
-
       <div className="flex gap-3">
         <button
           type="submit"
           disabled={loading}
           className="inline-flex h-10 items-center justify-center rounded-full bg-primary px-6 text-sm font-semibold text-primary-foreground transition hover:brightness-95 disabled:opacity-50"
         >
-          {loading ? "Saving…" : "Save changes"}
+          {loading ? "Creating…" : "Create event"}
         </button>
         <button
           type="button"
           onClick={() => router.push(cancelHref)}
-          className="inline-flex h-10 items-center justify-center rounded-full border border-border px-6 text-sm font-semibold transition hover:bg-muted"
+          disabled={loading}
+          className="inline-flex h-10 items-center justify-center rounded-full border border-border px-6 text-sm font-semibold transition hover:bg-muted disabled:opacity-50"
         >
           Cancel
         </button>

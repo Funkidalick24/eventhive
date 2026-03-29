@@ -35,8 +35,6 @@ Desktop.ini
 
 # local databases
 *.db
-*.sqlite
-*.sqlite3
 *.db-journal
 
 # debug

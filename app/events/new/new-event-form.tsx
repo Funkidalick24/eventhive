@@ -48,7 +48,7 @@ export function NewEventForm() {
           id="event-name"
           type="text"
           required
-          placeholder="End-of-semester party"
+          placeholder="AI & Product Meetup"
           value={name}
           onChange={(e) => setName(e.target.value)}
           className="h-10 rounded-lg border border-input bg-background px-3 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
@@ -76,7 +76,7 @@ export function NewEventForm() {
         <input
           id="event-location"
           type="text"
-          placeholder="Room 101, Main Campus"
+          placeholder="Innovation Hub, Room 204"
           value={location}
           onChange={(e) => setLocation(e.target.value)}
           className="h-10 rounded-lg border border-input bg-background px-3 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
@@ -90,7 +90,7 @@ export function NewEventForm() {
         <textarea
           id="event-description"
           rows={3}
-          placeholder="What's this event about?"
+          placeholder="A 90-minute meetup with a short talk, demos, and networking."
           value={description}
           onChange={(e) => setDescription(e.target.value)}
           className="rounded-lg border border-input bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 resize-none"

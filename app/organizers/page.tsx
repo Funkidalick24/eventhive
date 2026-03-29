@@ -1,9 +1,12 @@
 import Link from "next/link";
 import { Container } from "../components/container";
-import { getPublishedOrganizerCards } from "@/lib/db";
+import { prisma } from "@/lib/prisma";
 
-export default function OrganizersPage() {
-  const organizerCards = getPublishedOrganizerCards();
+export default async function OrganizersPage() {
+  const organizerCards = await prisma.organizerCard.findMany({
+    where: { is_published: true },
+    orderBy: [{ sort_order: "asc" }, { id: "asc" }],
+  });
 
   return (
     <main>
@@ -72,11 +75,10 @@ export default function OrganizersPage() {
           {organizerCards.length === 0 ? (
             <div className="rounded-2xl border border-dashed border-border bg-muted/20 p-8 text-center shadow-sm">
               <h2 className="font-heading text-xl font-semibold tracking-tight md:text-2xl">
-                Start organizing your first event
+                No organizer cards published yet
               </h2>
               <p className="mx-auto mt-2 max-w-2xl text-sm leading-6 text-muted-foreground">
-                Create an event to unlock organizer tools like guest management,
-                RSVP tracking, and task checklists.
+                Add organizer cards in the database and they will appear here automatically.
               </p>
             </div>
           ) : (

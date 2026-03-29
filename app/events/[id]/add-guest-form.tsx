@@ -44,10 +44,10 @@ export function AddGuestForm({ eventId }: { eventId: number }) {
   return (
     <section className="rounded-2xl border border-border bg-card p-6 md:p-8">
       <h2 className="font-heading text-xl font-semibold tracking-tight">
-        Add a guest
+        RSVP
       </h2>
       <p className="mt-1 text-sm text-muted-foreground">
-        Enter the guest&apos;s name and email. Their RSVP status will default to{" "}
+        Enter your name and email to RSVP. Your RSVP status will default to{" "}
         <strong>Pending</strong>.
       </p>
 
@@ -60,7 +60,7 @@ export function AddGuestForm({ eventId }: { eventId: number }) {
             id="guest-name"
             type="text"
             required
-            placeholder="Jane Doe"
+            placeholder="Your full name"
             value={name}
             onChange={(e) => setName(e.target.value)}
             className="h-10 rounded-lg border border-input bg-background px-3 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
@@ -75,7 +75,7 @@ export function AddGuestForm({ eventId }: { eventId: number }) {
             id="guest-email"
             type="email"
             required
-            placeholder="jane@example.com"
+            placeholder="you@example.com"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             className="h-10 rounded-lg border border-input bg-background px-3 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
@@ -90,7 +90,7 @@ export function AddGuestForm({ eventId }: { eventId: number }) {
 
         {success && (
           <p className="rounded-lg bg-green-500/10 px-3 py-2 text-sm text-green-700 dark:text-green-400">
-            Guest added successfully! RSVP status set to <strong>Pending</strong>.
+            RSVP received! Status set to <strong>Pending</strong>.
           </p>
         )}
 
@@ -100,7 +100,7 @@ export function AddGuestForm({ eventId }: { eventId: number }) {
             disabled={loading}
             className="inline-flex h-10 items-center justify-center rounded-full bg-primary px-6 text-sm font-semibold text-primary-foreground transition hover:brightness-95 disabled:opacity-50"
           >
-            {loading ? "Adding…" : "Add guest"}
+            {loading ? "Submitting…" : "Submit RSVP"}
           </button>
         </div>
       </form>

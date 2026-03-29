@@ -63,6 +63,7 @@ export default function SignupPage() {
               <input
                 name="name"
                 required
+                placeholder="Alex Johnson"
                 className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm"
               />
             </label>
@@ -73,6 +74,7 @@ export default function SignupPage() {
                 type="email"
                 name="email"
                 required
+                placeholder="alex@company.com"
                 className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm"
               />
             </label>
@@ -84,6 +86,7 @@ export default function SignupPage() {
                 name="password"
                 minLength={8}
                 required
+                placeholder="At least 8 characters"
                 className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm"
               />
               <span className="text-xs text-muted-foreground">
