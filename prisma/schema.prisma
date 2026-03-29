@@ -1,0 +1,56 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            Int      @id @default(autoincrement())
+  name          String
+  email         String   @unique
+  password_hash String
+  created_at    DateTime @default(now())
+
+  events        Event[]
+}
+
+model OrganizerCard {
+  id           Int      @id @default(autoincrement())
+  headline     String
+  body         String
+  example      String?
+  sort_order   Int      @default(0)
+  is_published Boolean  @default(true)
+  updated_at   DateTime @default(now())
+}
+
+model Event {
+  id           Int      @id @default(autoincrement())
+  name         String
+  date         String
+  time         String?
+  location     String?
+  description  String?
+  schedule     String?
+  organizer_id Int
+  created_at   DateTime @default(now())
+
+  organizer    User     @relation(fields: [organizer_id], references: [id])
+  guests       Guest[]
+}
+
+model Guest {
+  id          Int      @id @default(autoincrement())
+  event_id    Int
+  name        String
+  email       String
+  rsvp_status String   @default("Pending")
+  created_at  DateTime @default(now())
+
+  event       Event     @relation(fields: [event_id], references: [id], onDelete: Cascade)
+
+  @@unique([event_id, email])
+}

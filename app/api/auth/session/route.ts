@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { verifyJwt } from "@/lib/auth";
-import { getUserById } from "@/lib/db";
+import { prisma } from "@/lib/prisma";
 
 const SESSION_COOKIE = "eventhive_session";
 
@@ -22,7 +22,7 @@ export async function GET(request: Request) {
     return NextResponse.json({ authenticated: false }, { status: 401 });
   }
 
-  const user = getUserById(payload.sub);
+  const user = await prisma.user.findUnique({ where: { id: payload.sub } });
 
   if (!user) {
     return NextResponse.json({ authenticated: false }, { status: 401 });

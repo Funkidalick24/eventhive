@@ -3,7 +3,13 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
-export function DeleteEventButton({ eventId }: { eventId: number }) {
+export function DeleteEventButton({
+  eventId,
+  redirectTo = "/events",
+}: {
+  eventId: number;
+  redirectTo?: string;
+}) {
   const router = useRouter();
   const [confirming, setConfirming] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -21,7 +27,7 @@ export function DeleteEventButton({ eventId }: { eventId: number }) {
         setError(data.error ?? "Failed to delete event.");
         setConfirming(false);
       } else {
-        router.push("/events");
+        router.push(redirectTo);
         router.refresh();
       }
     } catch {

@@ -1,9 +1,11 @@
 import { type NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { verifyJwt } from "@/lib/auth";
-import { getEventById, updateEvent, deleteEvent } from "@/lib/db";
+import { prisma } from "@/lib/prisma";
+import { normalizeHHMM, normalizeYYYYMMDD } from "@/lib/date";
 
 const SESSION_COOKIE = "eventhive_session";
+export const runtime = "nodejs";
 
 async function authenticate() {
   const cookieStore = await cookies();
@@ -27,7 +29,7 @@ export async function PUT(
     return NextResponse.json({ error: "Invalid event ID" }, { status: 400 });
   }
 
-  const event = getEventById(eventId);
+  const event = await prisma.event.findUnique({ where: { id: eventId } });
   if (!event) {
     return NextResponse.json({ error: "Event not found" }, { status: 404 });
   }
@@ -40,20 +42,31 @@ export async function PUT(
   }
 
   const body = await request.json();
-  const { name, date, location, description } = body as Record<string, string>;
+  const { name, date, time, location, description, schedule } = body as Record<
+    string,
+    string
+  >;
 
-  if (!name?.trim() || !date?.trim()) {
+  const normalizedDate = date ? normalizeYYYYMMDD(date) : null;
+  const normalizedTime = time ? normalizeHHMM(time) : null;
+
+  if (!name?.trim() || !normalizedDate) {
     return NextResponse.json(
-      { error: "Name and date are required" },
+      { error: "Name and valid date are required" },
       { status: 400 }
     );
   }
 
-  updateEvent(eventId, {
-    name: name.trim(),
-    date: date.trim(),
-    location: location?.trim() || undefined,
-    description: description?.trim() || undefined,
+  await prisma.event.update({
+    where: { id: eventId },
+    data: {
+      name: name.trim(),
+      date: normalizedDate,
+      time: normalizedTime,
+      location: location?.trim() || null,
+      description: description?.trim() || null,
+      schedule: schedule?.trim() || null,
+    },
   });
 
   return NextResponse.json({ success: true });
@@ -74,7 +87,7 @@ export async function DELETE(
     return NextResponse.json({ error: "Invalid event ID" }, { status: 400 });
   }
 
-  const event = getEventById(eventId);
+  const event = await prisma.event.findUnique({ where: { id: eventId } });
   if (!event) {
     return NextResponse.json({ error: "Event not found" }, { status: 404 });
   }
@@ -86,7 +99,7 @@ export async function DELETE(
     );
   }
 
-  deleteEvent(eventId);
+  await prisma.event.delete({ where: { id: eventId } });
 
   return NextResponse.json({ success: true });
 }

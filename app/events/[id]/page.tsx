@@ -2,11 +2,15 @@ import { notFound } from "next/navigation";
 import { cookies } from "next/headers";
 import Link from "next/link";
 import { verifyJwt } from "@/lib/auth";
-import { getEventById, getGuestsByEventId } from "@/lib/db";
+import { prisma } from "@/lib/prisma";
+import {
+  formatHHMMToLocale,
+  getLocalDateYYYYMMDD,
+  parseYYYYMMDDToLocalDate,
+} from "@/lib/date";
+import { parseScheduleCardsForDisplay } from "@/lib/schedule";
 import { Container } from "@/app/components/container";
 import { AddGuestForm } from "./add-guest-form";
-import { DeleteEventButton } from "./delete-event-button";
-import { RemoveGuestButton } from "./remove-guest-button";
 
 export default async function EventDetailPage({
   params,
@@ -18,10 +22,14 @@ export default async function EventDetailPage({
 
   if (isNaN(eventId)) notFound();
 
-  const event = getEventById(eventId);
+  const event = await prisma.event.findUnique({ where: { id: eventId } });
   if (!event) notFound();
 
-  const guests = getGuestsByEventId(eventId);
+  const today = getLocalDateYYYYMMDD();
+  if (event.date < today) {
+    await prisma.event.delete({ where: { id: eventId } });
+    notFound();
+  }
 
   const cookieStore = await cookies();
   const token = cookieStore.get("eventhive_session")?.value;
@@ -29,18 +37,20 @@ export default async function EventDetailPage({
   const isAuthenticated = !!payload;
   const isOwner = payload?.sub === event.organizer_id;
 
-  const formattedDate = new Date(event.date).toLocaleDateString("en-US", {
+  const formattedDate = (
+    parseYYYYMMDDToLocalDate(event.date) ?? new Date(event.date)
+  ).toLocaleDateString("en-US", {
     weekday: "long",
     year: "numeric",
     month: "long",
     day: "numeric",
   });
+  const scheduleDisplay = parseScheduleCardsForDisplay(event.schedule);
 
   return (
     <main className="py-14 md:py-20">
       <Container>
         <div className="mx-auto max-w-3xl space-y-6">
-
           {/* Event header */}
           <header className="rounded-2xl border border-border bg-card p-6 md:p-8">
             <Link
@@ -54,28 +64,75 @@ export default async function EventDetailPage({
             </h1>
             <div className="mt-3 flex flex-wrap gap-4 text-sm text-muted-foreground">
               <span>📅 {formattedDate}</span>
+              {event.time && <span>⏰ {formatHHMMToLocale(event.time)}</span>}
               {event.location && <span>📍 {event.location}</span>}
             </div>
-            {event.description && (
-              <p className="mt-4 text-sm leading-6 text-muted-foreground md:text-base">
-                {event.description}
-              </p>
-            )}
 
             {isOwner && (
               <div className="mt-5 flex flex-wrap gap-3 border-t border-border pt-5">
                 <Link
-                  href={`/events/${eventId}/edit`}
+                  href={`/dashboard/events/${eventId}/edit`}
                   className="inline-flex h-10 items-center justify-center rounded-full bg-primary px-5 text-sm font-semibold text-primary-foreground transition hover:brightness-95"
                 >
-                  Edit event
+                  Manage in dashboard
                 </Link>
-                <DeleteEventButton eventId={eventId} />
               </div>
             )}
           </header>
 
-          {/* Add guest form – only for signed-in users */}
+          {/* About / details */}
+          {(event.description || event.schedule) && (
+            <section className="rounded-2xl border border-border bg-card p-6 md:p-8 space-y-5">
+              {event.description && (
+                <div>
+                  <h2 className="font-heading text-xl font-semibold tracking-tight">
+                    About this event
+                  </h2>
+                  <p className="mt-3 text-sm leading-6 text-muted-foreground md:text-base whitespace-pre-line">
+                    {event.description}
+                  </p>
+                </div>
+              )}
+
+              {event.schedule && (
+                <div>
+                  <h2 className="font-heading text-xl font-semibold tracking-tight">
+                    Schedule
+                  </h2>
+                  {scheduleDisplay.cards.length > 0 ? (
+                    <div className="mt-3 grid gap-3">
+                      {scheduleDisplay.cards.map((card, index) => (
+                        <article
+                          key={`${card.time}-${card.title}-${index}`}
+                          className="rounded-xl border border-border bg-background px-4 py-3"
+                        >
+                          <div className="flex flex-wrap items-center justify-between gap-2">
+                            <p className="font-medium text-foreground">
+                              {card.title || "Schedule item"}
+                            </p>
+                            <p className="text-xs font-semibold uppercase tracking-[0.12em] text-primary">
+                              {card.time ? formatHHMMToLocale(card.time) : "TBD"}
+                            </p>
+                          </div>
+                          {card.details ? (
+                            <p className="mt-2 text-sm text-muted-foreground">
+                              {card.details}
+                            </p>
+                          ) : null}
+                        </article>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="mt-3 text-sm leading-6 text-muted-foreground md:text-base whitespace-pre-line">
+                      {scheduleDisplay.fallbackText}
+                    </p>
+                  )}
+                </div>
+              )}
+            </section>
+          )}
+
+          {/* RSVP / sign up (does not reveal guest list) */}
           {isAuthenticated ? (
             <AddGuestForm eventId={eventId} />
           ) : (
@@ -87,53 +144,10 @@ export default async function EventDetailPage({
                 >
                   Sign in
                 </Link>{" "}
-                to add guests to this event.
+                to RSVP to this event.
               </p>
             </div>
           )}
-
-          {/* Guest list */}
-          <section className="rounded-2xl border border-border bg-card p-6 md:p-8">
-            <div className="flex items-center gap-3">
-              <h2 className="font-heading text-xl font-semibold tracking-tight">
-                Guest list
-              </h2>
-              <span className="rounded-full bg-primary/10 px-2.5 py-0.5 text-sm font-semibold text-primary">
-                {guests.length}
-              </span>
-            </div>
-
-            {guests.length === 0 ? (
-              <p className="mt-4 text-sm text-muted-foreground">
-                No guests added yet. Be the first to RSVP!
-              </p>
-            ) : (
-              <ul className="mt-4 divide-y divide-border">
-                {guests.map((guest) => (
-                  <li
-                    key={guest.id}
-                    className="flex items-center justify-between py-3"
-                  >
-                    <div>
-                      <p className="text-sm font-medium">{guest.name}</p>
-                      <p className="text-xs text-muted-foreground">
-                        {guest.email}
-                      </p>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <span className="rounded-full bg-amber-100 px-2.5 py-0.5 text-xs font-semibold text-amber-800 dark:bg-amber-900/30 dark:text-amber-400">
-                        {guest.rsvp_status}
-                      </span>
-                      {isAuthenticated && (
-                        <RemoveGuestButton guestId={guest.id} />
-                      )}
-                    </div>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </section>
-
         </div>
       </Container>
     </main>

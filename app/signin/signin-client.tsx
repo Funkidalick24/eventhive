@@ -162,6 +162,7 @@ export function SigninClient() {
               type="email"
               name="email"
               required
+              placeholder="name@school.edu"
               className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm"
             />
           </label>
@@ -172,6 +173,7 @@ export function SigninClient() {
               type="password"
               name="password"
               required
+              placeholder="Your password"
               className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm"
             />
           </label>

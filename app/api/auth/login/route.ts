@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { createJwt, verifyPassword } from "@/lib/auth";
-import { getUserByEmail } from "@/lib/db";
+import { prisma } from "@/lib/prisma";
 
 const SESSION_COOKIE = "eventhive_session";
 
@@ -20,7 +20,7 @@ export async function POST(request: Request) {
     );
   }
 
-  const user = getUserByEmail(email);
+  const user = await prisma.user.findUnique({ where: { email } });
 
   if (!user || !verifyPassword(password, user.password_hash)) {
     return NextResponse.json(
