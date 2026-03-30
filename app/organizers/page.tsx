@@ -2,8 +2,12 @@ import Link from "next/link";
 import { Container } from "../components/container";
 import { prisma } from "@/lib/prisma";
 
+type OrganizerCardItem = Awaited<
+  ReturnType<typeof prisma.organizerCard.findMany>
+>[number];
+
 export default async function OrganizersPage() {
-  const organizerCards = await prisma.organizerCard.findMany({
+  const organizerCards: OrganizerCardItem[] = await prisma.organizerCard.findMany({
     where: { is_published: true },
     orderBy: [{ sort_order: "asc" }, { id: "asc" }],
   });
