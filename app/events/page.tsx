@@ -57,6 +57,14 @@ export default async function EventsPage({
                 ? "Manage your published events and track guest RSVPs."
                 : "Discover upcoming events and add yourself to the guest list."}
             </p>
+            {isAuthenticated && (
+              <Link
+                href="/dashboard/events/new"
+                className="mt-2 inline-flex h-10 items-center rounded-full bg-primary px-5 text-sm font-semibold text-primary-foreground shadow-sm transition hover:brightness-95"
+              >
+                + Create event
+              </Link>
+            )}
           </div>
         </Container>
       </section>
