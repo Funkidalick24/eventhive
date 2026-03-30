@@ -1,7 +1,7 @@
 import { randomBytes } from "node:crypto";
 import { NextResponse } from "next/server";
 import { createJwt, hashPassword } from "@/lib/auth";
-import { Prisma } from "@prisma/client";
+import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 import { prisma } from "@/lib/prisma";
 import {
   decodeCookiePayload,
@@ -113,7 +113,7 @@ export async function GET(request: Request) {
         },
       });
     } catch (error) {
-      if (error instanceof Prisma.PrismaClientKnownRequestError) {
+      if (error instanceof PrismaClientKnownRequestError) {
         // Likely a concurrent insert; fall through to lookup.
         user = await prisma.user.findUnique({ where: { email } });
       } else {
