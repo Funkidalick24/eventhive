@@ -1,7 +1,8 @@
-﻿import Link from "next/link";
+import Link from "next/link";
 import { cookies } from "next/headers";
 import { verifyJwt } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import type { Event } from "@prisma/client";
 import { Container } from "../components/container";
 import {
   formatHHMMToLocale,
@@ -10,6 +11,10 @@ import {
 } from "@/lib/date";
 
 type UserRole = "attendee" | "organizer";
+type EventListItem = Pick<
+  Event,
+  "id" | "name" | "description" | "location" | "date" | "time"
+>;
 
 function getRoleFromQuery(roleParam?: string): UserRole {
   return roleParam === "organizer" ? "organizer" : "attendee";
@@ -33,7 +38,7 @@ export default async function EventsPage({
 
   const today = getLocalDateYYYYMMDD();
   await prisma.event.deleteMany({ where: { date: { lt: today } } });
-  const events = await prisma.event.findMany({
+  const events: EventListItem[] = await prisma.event.findMany({
     where: { date: { gte: today } },
     orderBy: { date: "asc" },
   });
@@ -126,3 +131,4 @@ export default async function EventsPage({
     </main>
   );
 }
+
