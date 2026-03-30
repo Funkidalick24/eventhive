@@ -20,7 +20,7 @@ DATABASE_URL=postgresql://USER:PASSWORD@HOST:5432/DB?sslmode=require
 
 # Optional (enables Google sign-in)
 GOOGLE_CLIENT_ID=replace-with-google-client-id
-GOOGLE_CLIENT_SECRET=replace-with-google-client-secret
+GOOGLE_CLIENT_SECRET=replace-with-google-client-secret`r`nGOOGLE_REDIRECT_URI=http://localhost:3000/api/auth/google/callback
 ```
 
 If you enable Google sign-in, add this redirect URL in Google Cloud Console:
@@ -43,3 +43,4 @@ pnpm dev
 pnpm lint
 pnpm build
 ```
+

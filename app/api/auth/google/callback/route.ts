@@ -43,7 +43,7 @@ export async function GET(request: Request) {
     return redirectToSigninWithError(origin, "missing_params");
   }
 
-  if (!clientId || !clientSecret) {
+  if (!clientId || !clientSecret || !redirectUri) {
     return redirectToSigninWithError(origin, "not_configured");
   }
 
@@ -151,3 +151,4 @@ export async function GET(request: Request) {
 
   return response;
 }
+

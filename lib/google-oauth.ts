@@ -11,8 +11,7 @@ export function getGoogleOAuthConfig(requestUrl: string) {
 
   const clientId = process.env.GOOGLE_CLIENT_ID ?? "";
   const clientSecret = process.env.GOOGLE_CLIENT_SECRET ?? "";
-  const redirectUri =
-    process.env.GOOGLE_REDIRECT_URI ?? `${origin}/api/auth/google/callback`;
+  const redirectUri = process.env.GOOGLE_REDIRECT_URI ?? "";
 
   return { origin, clientId, clientSecret, redirectUri };
 }
@@ -52,4 +51,5 @@ export async function verifyGoogleIdToken(input: {
     emailVerified: payload?.email_verified ?? null,
   };
 }
+
 

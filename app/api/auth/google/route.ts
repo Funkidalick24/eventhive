@@ -30,7 +30,7 @@ export async function GET(request: Request) {
 
   const { clientId, redirectUri } = getGoogleOAuthConfig(request.url);
 
-  if (!clientId) {
+  if (!clientId || !redirectUri) {
     return NextResponse.json(
       { message: "Google OAuth is not configured." },
       { status: 500 },
@@ -56,4 +56,5 @@ export async function GET(request: Request) {
 
   return response;
 }
+
 
