@@ -3,6 +3,7 @@ import { cookies } from "next/headers";
 import { verifyJwt } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { Container } from "../components/container";
+import { EventSearch } from "./event-search";
 import {
   formatHHMMToLocale,
   getLocalDateYYYYMMDD,
@@ -26,16 +27,22 @@ function getEventTeaser(description: string | null, location: string | null) {
 export default async function EventsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ role?: string }>;
+  searchParams: Promise<{ role?: string; q?: string }>;
 }) {
   const params = await searchParams;
   const role = getRoleFromQuery(params.role);
   const isOrganizer = role === "organizer";
+  const searchQuery = params.q?.trim() ?? "";
 
   const today = getLocalDateYYYYMMDD();
   await prisma.event.deleteMany({ where: { date: { lt: today } } });
   const events: EventListItem[] = await prisma.event.findMany({
-    where: { date: { gte: today } },
+    where: {
+      date: { gte: today },
+      ...(searchQuery
+        ? { name: { contains: searchQuery, mode: "insensitive" as const } }
+        : {}),
+    },
     orderBy: { date: "asc" },
   });
 
@@ -58,7 +65,21 @@ export default async function EventsPage({
                 ? "Manage your published events and track guest RSVPs."
                 : "Discover upcoming events and add yourself to the guest list."}
             </p>
+            {isAuthenticated && (
+              <Link
+                href="/dashboard/events/new"
+                className="mt-2 inline-flex h-10 items-center rounded-full bg-primary px-5 text-sm font-semibold text-primary-foreground shadow-sm transition hover:brightness-95"
+              >
+                + Create event
+              </Link>
+            )}
           </div>
+        </Container>
+      </section>
+
+      <section className="border-b border-border/70 py-6">
+        <Container>
+          <EventSearch />
         </Container>
       </section>
 
@@ -67,10 +88,12 @@ export default async function EventsPage({
           {events.length === 0 ? (
             <div className="rounded-2xl border border-dashed border-border bg-card p-8 text-center">
               <h2 className="font-heading text-2xl font-semibold tracking-tight">
-                No events yet
+                {searchQuery ? "No matching events" : "No events yet"}
               </h2>
               <p className="mx-auto mt-3 max-w-2xl text-sm text-muted-foreground md:text-base">
-                No upcoming events are published yet. Check back soon.
+                {searchQuery
+                  ? `No events matching "${searchQuery}" were found. Try a different search.`
+                  : "No upcoming events are published yet. Check back soon."}
               </p>
               {!isAuthenticated ? (
                 <Link

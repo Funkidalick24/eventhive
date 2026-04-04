@@ -109,6 +109,27 @@ export function TaskManager({ eventId, initialTasks }: Props) {
     }
   }
 
+  async function deleteTask(taskId: number) {
+    setError(null);
+    setPendingTaskIds((current) => [...current, taskId]);
+
+    try {
+      const res = await fetch(`/api/tasks/${taskId}`, { method: "DELETE" });
+      const data = (await res.json()) as { error?: string };
+
+      if (!res.ok) {
+        setError(data.error ?? "Failed to delete task.");
+      } else {
+        setTasks((current) => current.filter((t) => t.id !== taskId));
+        router.refresh();
+      }
+    } catch {
+      setError("Something went wrong. Please try again.");
+    } finally {
+      setPendingTaskIds((current) => current.filter((id) => id !== taskId));
+    }
+  }
+
   return (
     <section className="rounded-2xl border border-border bg-card p-6 md:p-8">
       <h2 className="font-heading text-xl font-semibold tracking-tight">
@@ -149,7 +170,7 @@ export function TaskManager({ eventId, initialTasks }: Props) {
       ) : (
         <div className="mt-4 grid gap-2">
           {tasks.map((task) => (
-            <label
+            <div
               key={task.id}
               className="flex items-center gap-3 rounded-xl border border-border bg-background px-3 py-2"
             >
@@ -161,7 +182,7 @@ export function TaskManager({ eventId, initialTasks }: Props) {
                 className="h-4 w-4 accent-primary"
               />
               <span
-                className={`text-sm ${
+                className={`flex-1 text-sm ${
                   task.is_completed
                     ? "text-muted-foreground line-through"
                     : "text-foreground"
@@ -169,7 +190,18 @@ export function TaskManager({ eventId, initialTasks }: Props) {
               >
                 {task.title}
               </span>
-            </label>
+              <button
+                type="button"
+                disabled={pendingSet.has(task.id)}
+                onClick={() => deleteTask(task.id)}
+                className="rounded-full p-1 text-muted-foreground transition hover:bg-destructive/10 hover:text-destructive disabled:opacity-50"
+                title="Delete task"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/>
+                </svg>
+              </button>
+            </div>
           ))}
         </div>
       )}
