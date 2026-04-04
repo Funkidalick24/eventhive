@@ -6,6 +6,7 @@ import { prisma } from "@/lib/prisma";
 import { Container } from "@/app/components/container";
 import { EditEventForm } from "@/app/events/[id]/edit/edit-event-form";
 import { DeleteEventButton } from "@/app/events/[id]/delete-event-button";
+import { TaskManager } from "./task-manager";
 
 export default async function DashboardEditEventPage({
   params,
@@ -30,6 +31,11 @@ export default async function DashboardEditEventPage({
   if (event.organizer_id !== payload.sub) {
     redirect("/dashboard/events");
   }
+
+  const tasks = await prisma.task.findMany({
+    where: { event_id: eventId },
+    orderBy: { created_at: "asc" },
+  });
 
   return (
     <main className="py-14 md:py-20">
@@ -65,6 +71,15 @@ export default async function DashboardEditEventPage({
               <DeleteEventButton eventId={eventId} redirectTo="/dashboard/events" />
             </div>
           </div>
+
+          <TaskManager
+            eventId={eventId}
+            initialTasks={tasks.map((task) => ({
+              id: task.id,
+              title: task.title,
+              is_completed: task.is_completed,
+            }))}
+          />
         </div>
       </Container>
     </main>

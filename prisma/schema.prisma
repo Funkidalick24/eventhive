@@ -40,6 +40,7 @@ model Event {
 
   organizer    User     @relation(fields: [organizer_id], references: [id])
   guests       Guest[]
+  tasks        Task[]
 }
 
 model Guest {
@@ -53,4 +54,15 @@ model Guest {
   event       Event     @relation(fields: [event_id], references: [id], onDelete: Cascade)
 
   @@unique([event_id, email])
+}
+
+model Task {
+  id           Int      @id @default(autoincrement())
+  event_id     Int
+  title        String
+  is_completed Boolean  @default(false)
+  created_at   DateTime @default(now())
+  updated_at   DateTime @updatedAt
+
+  event        Event    @relation(fields: [event_id], references: [id], onDelete: Cascade)
 }
