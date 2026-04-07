@@ -68,7 +68,10 @@ export function SigninClient() {
   useEffect(() => {
     if (!sessionUser) return;
     router.refresh();
-    router.replace(getDashboardHref(searchParams.get("role")));
+    const tid = setTimeout(() => {
+      router.replace(getDashboardHref(searchParams.get("role")));
+    }, 150);
+    return () => clearTimeout(tid);
   }, [router, searchParams, sessionUser]);
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
@@ -105,8 +108,13 @@ export function SigninClient() {
     form?.reset();
     setSubmitting(false);
     setMessage(null);
+
+    // Force the server layout (SiteHeader) to re-render with the new session
+    // cookie, then navigate to the dashboard.
     router.refresh();
-    router.push(getDashboardHref(searchParams.get("role")));
+    setTimeout(() => {
+      router.push(getDashboardHref(searchParams.get("role")));
+    }, 150);
   }
 
   function handleGoogleSignin() {
