@@ -10,20 +10,25 @@ export const runtime = "nodejs";
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const organizerId = searchParams.get("organizerId");
+  const q = searchParams.get("q")?.trim();
   const today = getLocalDateYYYYMMDD();
 
   await prisma.event.deleteMany({ where: { date: { lt: today } } });
 
+  const nameFilter = q
+    ? { name: { contains: q, mode: "insensitive" as const } }
+    : {};
+
   if (organizerId && !isNaN(Number(organizerId))) {
     const events = await prisma.event.findMany({
-      where: { organizer_id: Number(organizerId), date: { gte: today } },
+      where: { organizer_id: Number(organizerId), date: { gte: today }, ...nameFilter },
       orderBy: { date: "asc" },
     });
     return NextResponse.json(events);
   }
 
   const events = await prisma.event.findMany({
-    where: { date: { gte: today } },
+    where: { date: { gte: today }, ...nameFilter },
     orderBy: { date: "asc" },
   });
   return NextResponse.json(events);

@@ -133,3 +133,57 @@ export async function DELETE(request: NextRequest) {
   await prisma.guest.delete({ where: { id: guest.id } });
   return NextResponse.json({ success: true });
 }
+
+const VALID_RSVP_STATUSES = ["Accepted", "Declined", "Pending"];
+
+export async function PATCH(request: NextRequest) {
+  const cookieStore = await cookies();
+  const token = cookieStore.get(SESSION_COOKIE)?.value;
+
+  if (!token) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const payload = verifyJwt(token);
+  if (!payload) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const body = await request.json();
+  const { guestId, rsvp_status } = body as Record<string, unknown>;
+
+  if (!guestId || isNaN(Number(guestId))) {
+    return NextResponse.json(
+      { error: "guestId is required" },
+      { status: 400 }
+    );
+  }
+
+  if (typeof rsvp_status !== "string" || !VALID_RSVP_STATUSES.includes(rsvp_status)) {
+    return NextResponse.json(
+      { error: "rsvp_status must be Accepted, Declined, or Pending" },
+      { status: 400 }
+    );
+  }
+
+  const guest = await prisma.guest.findUnique({ where: { id: Number(guestId) } });
+  if (!guest) {
+    return NextResponse.json({ error: "Guest not found" }, { status: 404 });
+  }
+
+  const event = await prisma.event.findUnique({ where: { id: guest.event_id } });
+  if (!event) {
+    return NextResponse.json({ error: "Event not found" }, { status: 404 });
+  }
+
+  if (event.organizer_id !== payload.sub) {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  }
+
+  const updatedGuest = await prisma.guest.update({
+    where: { id: Number(guestId) },
+    data: { rsvp_status },
+  });
+
+  return NextResponse.json(updatedGuest);
+}

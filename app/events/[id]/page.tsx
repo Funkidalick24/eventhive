@@ -12,6 +12,7 @@ import { parseScheduleCardsForDisplay } from "@/lib/schedule";
 import { Container } from "@/app/components/container";
 import { AddGuestForm } from "./add-guest-form";
 import { RemoveGuestButton } from "./remove-guest-button";
+import { RsvpStatusSelect } from "./rsvp-status-select";
 
 export default async function EventDetailPage({
   params,
@@ -167,9 +168,7 @@ export default async function EventDetailPage({
                         <p className="truncate text-xs text-muted-foreground">{guest.email}</p>
                       </div>
                       <div className="flex shrink-0 items-center gap-3">
-                        <span className="rounded-full bg-primary/10 px-2 py-0.5 text-xs font-semibold text-primary">
-                          {guest.rsvp_status}
-                        </span>
+                        <RsvpStatusSelect guestId={guest.id} currentStatus={guest.rsvp_status} />
                         <RemoveGuestButton guestId={guest.id} />
                       </div>
                     </div>
