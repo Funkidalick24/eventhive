@@ -23,6 +23,13 @@ export function TaskManager({ eventId, initialTasks }: Props) {
   const [pendingTaskIds, setPendingTaskIds] = useState<number[]>([]);
 
   const pendingSet = useMemo(() => new Set(pendingTaskIds), [pendingTaskIds]);
+  const completedCount = useMemo(
+    () => tasks.filter((task) => task.is_completed).length,
+    [tasks]
+  );
+  const totalCount = tasks.length;
+  const progressPercent =
+    totalCount === 0 ? 0 : Math.round((completedCount / totalCount) * 100);
 
   async function handleCreateTask(e: React.FormEvent) {
     e.preventDefault();
@@ -138,6 +145,21 @@ export function TaskManager({ eventId, initialTasks }: Props) {
       <p className="mt-1 text-sm text-muted-foreground">
         Add and complete tasks to keep event prep on track.
       </p>
+      <div className="mt-4 space-y-2 rounded-xl border border-border bg-background px-4 py-3">
+        <div className="flex items-center justify-between gap-3">
+          <p className="text-sm font-medium text-foreground">
+            Progress: {completedCount}/{totalCount} tasks
+          </p>
+          <p className="text-sm font-semibold text-primary">{progressPercent}%</p>
+        </div>
+        <div className="h-2 w-full overflow-hidden rounded-full bg-muted">
+          <div
+            className="h-full rounded-full bg-primary transition-all"
+            style={{ width: `${progressPercent}%` }}
+            aria-hidden="true"
+          />
+        </div>
+      </div>
 
       <form onSubmit={handleCreateTask} className="mt-5 flex gap-2">
         <input

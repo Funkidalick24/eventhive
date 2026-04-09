@@ -37,6 +37,13 @@ function formatEventDate(date: string, time: string | null) {
   return time ? `${dateText} • ${formatHHMMToLocale(time)}` : dateText;
 }
 
+function getTaskProgress(tasks: { is_completed: boolean }[]) {
+  const total = tasks.length;
+  const completed = tasks.filter((task) => task.is_completed).length;
+  const percent = total === 0 ? 0 : Math.round((completed / total) * 100);
+  return { total, completed, percent };
+}
+
 export default async function DashboardPage({
   searchParams,
 }: {
@@ -71,6 +78,13 @@ export default async function DashboardPage({
 
   const myEventsRaw = await prisma.event.findMany({
     where: { organizer_id: user.id, date: { gte: today } },
+    include: {
+      tasks: {
+        select: {
+          is_completed: true,
+        },
+      },
+    },
   });
 
   const myRsvpsRaw = await prisma.guest.findMany({
@@ -146,34 +160,55 @@ export default async function DashboardPage({
                 </div>
               ) : (
                 <div className="mt-5 grid gap-4 sm:grid-cols-2">
-                  {myEvents.map((event) => (
-                    <article
-                      key={event.id}
-                      className="rounded-2xl border border-border bg-background p-6 shadow-sm"
-                    >
-                      <h3 className="font-heading text-lg font-semibold tracking-tight">
-                        {event.name}
-                      </h3>
-                      <p className="mt-2 text-xs text-muted-foreground">
-                        {formatEventDate(event.date, event.time)}
-                        {event.location ? ` • ${event.location}` : ""}
-                      </p>
-                      <div className="mt-4 flex flex-wrap gap-3">
-                        <Link
-                          href={`/dashboard/events/${event.id}/edit`}
-                          className="inline-flex h-9 items-center justify-center rounded-full bg-primary px-4 text-sm font-semibold text-primary-foreground transition hover:brightness-95"
-                        >
-                          Edit
-                        </Link>
-                        <Link
-                          href={`/events/${event.id}`}
-                          className="inline-flex h-9 items-center justify-center rounded-full border border-border bg-card px-4 text-sm font-semibold transition hover:bg-muted"
-                        >
-                          View
-                        </Link>
-                      </div>
-                    </article>
-                  ))}
+                  {myEvents.map((event) => {
+                    const progress = getTaskProgress(event.tasks);
+
+                    return (
+                      <article
+                        key={event.id}
+                        className="rounded-2xl border border-border bg-background p-6 shadow-sm"
+                      >
+                        <h3 className="font-heading text-lg font-semibold tracking-tight">
+                          {event.name}
+                        </h3>
+                        <p className="mt-2 text-xs text-muted-foreground">
+                          {formatEventDate(event.date, event.time)}
+                          {event.location ? ` • ${event.location}` : ""}
+                        </p>
+                        <div className="mt-4 space-y-2 rounded-xl border border-border bg-card px-3 py-3">
+                          <div className="flex items-center justify-between gap-3">
+                            <p className="text-xs font-medium text-foreground">
+                              Tasks: {progress.completed}/{progress.total}
+                            </p>
+                            <p className="text-xs font-semibold text-primary">
+                              {progress.percent}%
+                            </p>
+                          </div>
+                          <div className="h-2 w-full overflow-hidden rounded-full bg-muted">
+                            <div
+                              className="h-full rounded-full bg-primary transition-all"
+                              style={{ width: `${progress.percent}%` }}
+                              aria-hidden="true"
+                            />
+                          </div>
+                        </div>
+                        <div className="mt-4 flex flex-wrap gap-3">
+                          <Link
+                            href={`/dashboard/events/${event.id}/edit`}
+                            className="inline-flex h-9 items-center justify-center rounded-full bg-primary px-4 text-sm font-semibold text-primary-foreground transition hover:brightness-95"
+                          >
+                            Edit
+                          </Link>
+                          <Link
+                            href={`/events/${event.id}`}
+                            className="inline-flex h-9 items-center justify-center rounded-full border border-border bg-card px-4 text-sm font-semibold transition hover:bg-muted"
+                          >
+                            View
+                          </Link>
+                        </div>
+                      </article>
+                    );
+                  })}
                 </div>
               )}
             </section>
