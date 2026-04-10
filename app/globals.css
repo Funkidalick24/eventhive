@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 :root {
   /* EventHive "Aurora" theme (light) */
   --background: #fafaf9; /* stone-50-ish */

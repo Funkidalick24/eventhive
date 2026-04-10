@@ -25,16 +25,23 @@ function applyTheme(theme: Theme) {
   window.localStorage.setItem("theme", theme);
 }
 
+function applyThemeWithoutPersist(theme: Theme) {
+  const root = document.documentElement;
+  root.classList.remove("light", "dark");
+  root.classList.add(theme);
+}
+
 function getResolvedTheme(): Theme {
   const stored = getStoredTheme();
   return stored ?? getSystemTheme();
 }
 
 export function ThemeToggle() {
-  const [theme, setTheme] = useState<Theme>("light");
+  const [theme, setTheme] = useState<Theme>(() => getResolvedTheme());
 
   useEffect(() => {
-    setTheme(getResolvedTheme());
+    const resolved = getResolvedTheme();
+    applyThemeWithoutPersist(resolved);
 
     const stored = getStoredTheme();
     if (stored) return;
@@ -42,7 +49,11 @@ export function ThemeToggle() {
     const mql = window.matchMedia?.("(prefers-color-scheme: dark)");
     if (!mql) return;
 
-    const handler = () => setTheme(getSystemTheme());
+    const handler = () => {
+      const next = getSystemTheme();
+      applyThemeWithoutPersist(next);
+      setTheme(next);
+    };
     mql.addEventListener?.("change", handler);
     return () => mql.removeEventListener?.("change", handler);
   }, []);

@@ -39,10 +39,11 @@ export default function RootLayout({
         <Script id="theme-init" strategy="beforeInteractive">
           {`(() => {
   try {
-    const theme = localStorage.getItem('theme');
-    if (theme === 'light' || theme === 'dark') {
-      document.documentElement.classList.add(theme);
-    }
+    const stored = localStorage.getItem('theme');
+    const system = window.matchMedia?.('(prefers-color-scheme: dark)')?.matches ? 'dark' : 'light';
+    const theme = stored === 'light' || stored === 'dark' ? stored : system;
+    document.documentElement.classList.remove('light', 'dark');
+    document.documentElement.classList.add(theme);
   } catch {}
 })();`}
         </Script>
