@@ -1,17 +1,17 @@
 import { NextResponse } from "next/server";
 import { hashPassword, validatePassword } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { sanitizeEmail, sanitizeString, safeJsonObject } from "@/lib/sanitize";
 
 export async function POST(request: Request) {
-  const body = (await request.json()) as {
-    name?: string;
-    email?: string;
-    password?: string;
-  };
+  const body = await safeJsonObject(request);
+  if (!body) {
+    return NextResponse.json({ message: "Invalid request body." }, { status: 400 });
+  }
 
-  const name = body.name?.trim();
-  const email = body.email?.trim().toLowerCase();
-  const password = body.password ?? "";
+  const name = sanitizeString(body.name, { maxLength: 120 });
+  const email = sanitizeEmail(body.email);
+  const password = sanitizeString(body.password, { trim: false, maxLength: 1024 });
 
   if (!name || !email || !password) {
     return NextResponse.json(

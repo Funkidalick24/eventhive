@@ -2,6 +2,12 @@ import { type NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { verifyJwt } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import {
+  sanitizeEmail,
+  sanitizeInteger,
+  sanitizeString,
+  safeJsonObject,
+} from "@/lib/sanitize";
 
 const SESSION_COOKIE = "eventhive_session";
 export const runtime = "nodejs";
@@ -20,16 +26,16 @@ export async function GET(request: NextRequest) {
   }
 
   const { searchParams } = new URL(request.url);
-  const eventId = searchParams.get("eventId");
+  const eventId = sanitizeInteger(searchParams.get("eventId"));
 
-  if (!eventId || isNaN(Number(eventId))) {
+  if (eventId === null) {
     return NextResponse.json(
       { error: "eventId query param is required" },
       { status: 400 }
     );
   }
 
-  const event = await prisma.event.findUnique({ where: { id: Number(eventId) } });
+  const event = await prisma.event.findUnique({ where: { id: eventId } });
   if (!event) {
     return NextResponse.json({ error: "Event not found" }, { status: 404 });
   }
@@ -39,7 +45,7 @@ export async function GET(request: NextRequest) {
   }
 
   const guests = await prisma.guest.findMany({
-    where: { event_id: Number(eventId) },
+    where: { event_id: eventId },
     orderBy: { created_at: "asc" },
   });
 
@@ -59,23 +65,29 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const body = await request.json();
-  const { event_id, name, email } = body as Record<string, string>;
+  const body = await safeJsonObject(request);
+  if (!body) {
+    return NextResponse.json({ error: "Invalid request body" }, { status: 400 });
+  }
 
-  if (!event_id || !name?.trim() || !email?.trim()) {
+  const eventId = sanitizeInteger(body.event_id);
+  const name = sanitizeString(body.name, { maxLength: 120 });
+  const email = sanitizeEmail(body.email);
+
+  if (eventId === null || !name || !email) {
     return NextResponse.json(
       { error: "event_id, name, and email are required" },
       { status: 400 }
     );
   }
 
-  const event = await prisma.event.findUnique({ where: { id: Number(event_id) } });
+  const event = await prisma.event.findUnique({ where: { id: eventId } });
   if (!event) {
     return NextResponse.json({ error: "Event not found" }, { status: 404 });
   }
 
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  if (!emailRegex.test(email.trim())) {
+  if (!emailRegex.test(email)) {
     return NextResponse.json(
       { error: "Invalid email address" },
       { status: 400 }
@@ -84,9 +96,9 @@ export async function POST(request: NextRequest) {
 
   const guest = await prisma.guest.create({
     data: {
-      event_id: Number(event_id),
-      name: name.trim(),
-      email: email.trim(),
+      event_id: eventId,
+      name,
+      email,
     },
   });
 
@@ -107,16 +119,16 @@ export async function DELETE(request: NextRequest) {
   }
 
   const { searchParams } = new URL(request.url);
-  const guestId = searchParams.get("guestId");
+  const guestId = sanitizeInteger(searchParams.get("guestId"));
 
-  if (!guestId || isNaN(Number(guestId))) {
+  if (guestId === null) {
     return NextResponse.json(
       { error: "guestId query param is required" },
       { status: 400 }
     );
   }
 
-  const guest = await prisma.guest.findUnique({ where: { id: Number(guestId) } });
+  const guest = await prisma.guest.findUnique({ where: { id: guestId } });
   if (!guest) {
     return NextResponse.json({ error: "Guest not found" }, { status: 404 });
   }
@@ -149,24 +161,29 @@ export async function PATCH(request: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const body = await request.json();
-  const { guestId, rsvp_status } = body as Record<string, unknown>;
+  const body = await safeJsonObject(request);
+  if (!body) {
+    return NextResponse.json({ error: "Invalid request body" }, { status: 400 });
+  }
 
-  if (!guestId || isNaN(Number(guestId))) {
+  const guestId = sanitizeInteger(body.guestId);
+  const rsvpStatus = sanitizeString(body.rsvp_status, { maxLength: 20 });
+
+  if (guestId === null) {
     return NextResponse.json(
       { error: "guestId is required" },
       { status: 400 }
     );
   }
 
-  if (typeof rsvp_status !== "string" || !VALID_RSVP_STATUSES.includes(rsvp_status)) {
+  if (!VALID_RSVP_STATUSES.includes(rsvpStatus)) {
     return NextResponse.json(
       { error: "rsvp_status must be Accepted, Declined, or Pending" },
       { status: 400 }
     );
   }
 
-  const guest = await prisma.guest.findUnique({ where: { id: Number(guestId) } });
+  const guest = await prisma.guest.findUnique({ where: { id: guestId } });
   if (!guest) {
     return NextResponse.json({ error: "Guest not found" }, { status: 404 });
   }
@@ -181,8 +198,8 @@ export async function PATCH(request: NextRequest) {
   }
 
   const updatedGuest = await prisma.guest.update({
-    where: { id: Number(guestId) },
-    data: { rsvp_status },
+    where: { id: guestId },
+    data: { rsvp_status: rsvpStatus },
   });
 
   return NextResponse.json(updatedGuest);

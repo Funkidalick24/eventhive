@@ -46,6 +46,7 @@ export function SigninClient() {
   const [submitting, setSubmitting] = useState(false);
   const [oauthSubmitting, setOauthSubmitting] = useState(false);
   const [sessionUser, setSessionUser] = useState<SessionUser | null>(null);
+  const [showPassword, setShowPassword] = useState(false);
 
   const showRegisteredNotice = searchParams.get("registered") === "1";
 
@@ -177,13 +178,22 @@ export function SigninClient() {
 
           <label className="block space-y-2">
             <span className="text-sm font-medium">Password</span>
-            <input
-              type="password"
-              name="password"
-              required
-              placeholder="Your password"
-              className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm"
-            />
+            <div className="relative">
+              <input
+                type={showPassword ? "text" : "password"}
+                name="password"
+                required
+                placeholder="Your password"
+                className="w-full rounded-lg border border-border bg-background px-3 py-2 pr-16 text-sm"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword((current) => !current)}
+                className="absolute inset-y-0 right-2 my-auto h-7 rounded-md px-2 text-xs font-medium text-muted-foreground transition hover:bg-muted hover:text-foreground"
+              >
+                {showPassword ? "Hide" : "Show"}
+              </button>
+            </div>
           </label>
 
           <button

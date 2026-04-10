@@ -10,9 +10,22 @@ export default function SignupPage() {
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+
+  const passwordsDoNotMatch =
+    confirmPassword.length > 0 && password !== confirmPassword;
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+
+    if (password !== confirmPassword) {
+      setError("Passwords do not match.");
+      return;
+    }
+
     setSubmitting(true);
     setMessage(null);
     setError(null);
@@ -41,6 +54,8 @@ export default function SignupPage() {
     }
 
     form?.reset();
+    setPassword("");
+    setConfirmPassword("");
     setSubmitting(false);
     setMessage(null);
     router.push(`/signin?registered=1&role=${encodeURIComponent(role)}`);
@@ -81,17 +96,58 @@ export default function SignupPage() {
 
             <label className="block space-y-2">
               <span className="text-sm font-medium">Password</span>
-              <input
-                type="password"
-                name="password"
-                minLength={8}
-                required
-                placeholder="At least 8 characters"
-                className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm"
-              />
+              <div className="relative">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  name="password"
+                  minLength={8}
+                  required
+                  value={password}
+                  onChange={(event) => setPassword(event.target.value)}
+                  placeholder="At least 8 characters"
+                  className="w-full rounded-lg border border-border bg-background px-3 py-2 pr-16 text-sm"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword((current) => !current)}
+                  className="absolute inset-y-0 right-2 my-auto h-7 rounded-md px-2 text-xs font-medium text-muted-foreground transition hover:bg-muted hover:text-foreground"
+                >
+                  {showPassword ? "Hide" : "Show"}
+                </button>
+              </div>
               <span className="text-xs text-muted-foreground">
                 Minimum 8 characters.
               </span>
+            </label>
+
+            <label className="block space-y-2">
+              <span className="text-sm font-medium">Confirm password</span>
+              <div className="relative">
+                <input
+                  type={showConfirmPassword ? "text" : "password"}
+                  name="confirmPassword"
+                  minLength={8}
+                  required
+                  value={confirmPassword}
+                  onChange={(event) => setConfirmPassword(event.target.value)}
+                  placeholder="Re-enter your password"
+                  className={`w-full rounded-lg border bg-background px-3 py-2 pr-16 text-sm ${
+                    passwordsDoNotMatch ? "border-rose-500" : "border-border"
+                  }`}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowConfirmPassword((current) => !current)}
+                  className="absolute inset-y-0 right-2 my-auto h-7 rounded-md px-2 text-xs font-medium text-muted-foreground transition hover:bg-muted hover:text-foreground"
+                >
+                  {showConfirmPassword ? "Hide" : "Show"}
+                </button>
+              </div>
+              {passwordsDoNotMatch ? (
+                <span className="text-xs text-rose-600 dark:text-rose-400">
+                  Passwords do not match.
+                </span>
+              ) : null}
             </label>
 
             <label className="block space-y-2">
@@ -108,7 +164,7 @@ export default function SignupPage() {
 
             <button
               type="submit"
-              disabled={submitting}
+              disabled={submitting || passwordsDoNotMatch}
               className="inline-flex h-10 items-center rounded-full bg-primary px-4 text-sm font-semibold text-primary-foreground disabled:opacity-70"
             >
               {submitting ? "Creating account..." : "Sign up"}

@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import { createJwt, hashPassword } from "@/lib/auth";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 import { prisma } from "@/lib/prisma";
+import { sanitizeEmail, sanitizeString } from "@/lib/sanitize";
 import {
   decodeCookiePayload,
   getGoogleOAuthConfig,
@@ -94,8 +95,8 @@ export async function GET(request: Request) {
     return redirectToSigninWithError(origin, "invalid_id_token");
   }
 
-  const email = verified.email?.trim().toLowerCase();
-  const name = verified.name?.trim() || "Google user";
+  const email = sanitizeEmail(verified.email);
+  const name = sanitizeString(verified.name, { maxLength: 120 }) || "Google user";
 
   if (!email || verified.emailVerified === false) {
     return redirectToSigninWithError(origin, "email_not_verified");

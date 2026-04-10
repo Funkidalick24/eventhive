@@ -2,6 +2,7 @@ import { type NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { verifyJwt } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { safeJsonObject } from "@/lib/sanitize";
 
 const SESSION_COOKIE = "eventhive_session";
 export const runtime = "nodejs";
@@ -42,7 +43,11 @@ export async function PATCH(
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
-  const body = await request.json();
+  const body = await safeJsonObject(request);
+  if (!body) {
+    return NextResponse.json({ error: "Invalid request body" }, { status: 400 });
+  }
+
   const { is_completed } = body as Record<string, unknown>;
   if (typeof is_completed !== "boolean") {
     return NextResponse.json(

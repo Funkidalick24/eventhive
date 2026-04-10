@@ -5,6 +5,7 @@ import {
   getGoogleOAuthConfig,
   type GoogleOauthCookiePayload,
 } from "@/lib/google-oauth";
+import { sanitizeString } from "@/lib/sanitize";
 
 const OAUTH_COOKIE = "eventhive_google_oauth";
 
@@ -26,7 +27,11 @@ function buildAuthUrl(input: {
 
 export async function GET(request: Request) {
   const url = new URL(request.url);
-  const role = url.searchParams.get("role");
+  const roleParam = sanitizeString(url.searchParams.get("role"), {
+    maxLength: 20,
+  });
+  const role =
+    roleParam === "organizer" || roleParam === "attendee" ? roleParam : null;
 
   const { clientId, redirectUri } = getGoogleOAuthConfig(request.url);
 

@@ -1,17 +1,18 @@
 import { NextResponse } from "next/server";
 import { createJwt, verifyPassword } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { sanitizeEmail, sanitizeString, safeJsonObject } from "@/lib/sanitize";
 
 const SESSION_COOKIE = "eventhive_session";
 
 export async function POST(request: Request) {
-  const body = (await request.json()) as {
-    email?: string;
-    password?: string;
-  };
+  const body = await safeJsonObject(request);
+  if (!body) {
+    return NextResponse.json({ message: "Invalid request body." }, { status: 400 });
+  }
 
-  const email = body.email?.trim().toLowerCase();
-  const password = body.password ?? "";
+  const email = sanitizeEmail(body.email);
+  const password = sanitizeString(body.password, { trim: false, maxLength: 1024 });
 
   if (!email || !password) {
     return NextResponse.json(
