@@ -9,6 +9,19 @@ import {
   parseYYYYMMDDToLocalDate,
 } from "@/lib/date";
 import { Container } from "../components/container";
+import {
+  ArrowRightIcon,
+  CalendarIcon,
+  CheckCircleIcon,
+  ClockIcon,
+  EditIcon,
+  EyeIcon,
+  MapPinIcon,
+  PlusIcon,
+  SparkIcon,
+  UserIcon,
+  XCircleIcon,
+} from "../components/icons";
 
 const SESSION_COOKIE = "eventhive_session";
 type DashboardTab = "events" | "rsvps";
@@ -114,22 +127,24 @@ export default async function DashboardPage({
             <div className="mt-5 flex flex-wrap gap-3">
               <Link
                 href="/dashboard?tab=events"
-                className={`inline-flex h-10 items-center justify-center rounded-full px-4 text-sm font-semibold transition ${
+                className={`inline-flex h-10 items-center justify-center gap-2 rounded-full px-4 text-sm font-semibold transition ${
                   activeTab === "events"
                     ? "bg-primary text-primary-foreground"
                     : "border border-border bg-background hover:bg-muted"
                 }`}
               >
+                <CalendarIcon className="size-4" />
                 My events ({myEvents.length})
               </Link>
               <Link
                 href="/dashboard?tab=rsvps"
-                className={`inline-flex h-10 items-center justify-center rounded-full px-4 text-sm font-semibold transition ${
+                className={`inline-flex h-10 items-center justify-center gap-2 rounded-full px-4 text-sm font-semibold transition ${
                   activeTab === "rsvps"
                     ? "bg-primary text-primary-foreground"
                     : "border border-border bg-background hover:bg-muted"
                 }`}
               >
+                <UserIcon className="size-4" />
                 My RSVPs ({myRsvps.length})
               </Link>
             </div>
@@ -143,9 +158,10 @@ export default async function DashboardPage({
                 </h2>
                 <Link
                   href="/dashboard/events/new"
-                  className="inline-flex h-10 items-center justify-center rounded-full bg-primary px-5 text-sm font-semibold text-primary-foreground transition hover:brightness-95"
+                  className="inline-flex h-10 items-center justify-center gap-2 rounded-full bg-primary px-5 text-sm font-semibold text-primary-foreground transition hover:brightness-95"
                 >
-                  + Create event
+                  <PlusIcon className="size-4" />
+                  Create event
                 </Link>
               </div>
 
@@ -172,12 +188,21 @@ export default async function DashboardPage({
                           {event.name}
                         </h3>
                         <p className="mt-2 text-xs text-muted-foreground">
-                          {formatEventDate(event.date, event.time)}
-                          {event.location ? ` • ${event.location}` : ""}
+                          <span className="inline-flex items-center gap-1">
+                            <CalendarIcon className="size-3.5" />
+                            {formatEventDate(event.date, event.time)}
+                          </span>
+                          {event.location ? (
+                            <span className="ml-2 inline-flex items-center gap-1">
+                              <MapPinIcon className="size-3.5" />
+                              {event.location}
+                            </span>
+                          ) : null}
                         </p>
                         <div className="mt-4 space-y-2 rounded-xl border border-border bg-card px-3 py-3">
                           <div className="flex items-center justify-between gap-3">
-                            <p className="text-xs font-medium text-foreground">
+                            <p className="inline-flex items-center gap-1 text-xs font-medium text-foreground">
+                              <SparkIcon className="size-3.5" />
                               Tasks: {progress.completed}/{progress.total}
                             </p>
                             <p className="text-xs font-semibold text-primary">
@@ -195,14 +220,16 @@ export default async function DashboardPage({
                         <div className="mt-4 flex flex-wrap gap-3">
                           <Link
                             href={`/dashboard/events/${event.id}/edit`}
-                            className="inline-flex h-9 items-center justify-center rounded-full bg-primary px-4 text-sm font-semibold text-primary-foreground transition hover:brightness-95"
+                            className="inline-flex h-9 items-center justify-center gap-2 rounded-full bg-primary px-4 text-sm font-semibold text-primary-foreground transition hover:brightness-95"
                           >
+                            <EditIcon className="size-3.5" />
                             Edit
                           </Link>
                           <Link
                             href={`/events/${event.id}`}
-                            className="inline-flex h-9 items-center justify-center rounded-full border border-border bg-card px-4 text-sm font-semibold transition hover:bg-muted"
+                            className="inline-flex h-9 items-center justify-center gap-2 rounded-full border border-border bg-card px-4 text-sm font-semibold transition hover:bg-muted"
                           >
+                            <EyeIcon className="size-3.5" />
                             View
                           </Link>
                         </div>
@@ -220,8 +247,9 @@ export default async function DashboardPage({
                 </h2>
                 <Link
                   href="/events"
-                  className="inline-flex h-10 items-center justify-center rounded-full border border-border bg-background px-5 text-sm font-semibold transition hover:bg-muted"
+                  className="inline-flex h-10 items-center justify-center gap-2 rounded-full border border-border bg-background px-5 text-sm font-semibold transition hover:bg-muted"
                 >
+                  <ArrowRightIcon className="size-4" />
                   Browse events
                 </Link>
               </div>
@@ -246,17 +274,33 @@ export default async function DashboardPage({
                         {rsvp.event.name}
                       </h3>
                       <p className="mt-2 text-xs text-muted-foreground">
-                        {formatEventDate(rsvp.event.date, rsvp.event.time)}
-                        {rsvp.event.location ? ` • ${rsvp.event.location}` : ""}
+                        <span className="inline-flex items-center gap-1">
+                          <CalendarIcon className="size-3.5" />
+                          {formatEventDate(rsvp.event.date, rsvp.event.time)}
+                        </span>
+                        {rsvp.event.location ? (
+                          <span className="ml-2 inline-flex items-center gap-1">
+                            <MapPinIcon className="size-3.5" />
+                            {rsvp.event.location}
+                          </span>
+                        ) : null}
                       </p>
-                      <p className="mt-3 inline-flex rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.12em] text-primary">
+                      <p className="mt-3 inline-flex items-center gap-1 rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.12em] text-primary">
+                        {rsvp.rsvp_status === "Accepted" ? (
+                          <CheckCircleIcon className="size-3.5" />
+                        ) : rsvp.rsvp_status === "Declined" ? (
+                          <XCircleIcon className="size-3.5" />
+                        ) : (
+                          <ClockIcon className="size-3.5" />
+                        )}
                         RSVP: {rsvp.rsvp_status}
                       </p>
                       <div className="mt-4">
                         <Link
                           href={`/events/${rsvp.event.id}`}
-                          className="inline-flex h-9 items-center justify-center rounded-full border border-border bg-card px-4 text-sm font-semibold transition hover:bg-muted"
+                          className="inline-flex h-9 items-center justify-center gap-2 rounded-full border border-border bg-card px-4 text-sm font-semibold transition hover:bg-muted"
                         >
+                          <EyeIcon className="size-3.5" />
                           View event
                         </Link>
                       </div>

@@ -1,5 +1,14 @@
 import Link from "next/link";
 import { Container } from "./components/container";
+import {
+  ArrowRightIcon,
+  CalendarIcon,
+  CheckCircleIcon,
+  LockIcon,
+  PlusIcon,
+  SparkIcon,
+  UserIcon,
+} from "./components/icons";
 import { prisma } from "@/lib/prisma";
 import {
   formatHHMMToLocale,
@@ -88,14 +97,16 @@ export default async function Home() {
               <div className="mt-10 flex flex-col gap-3 sm:flex-row">
                 <Link
                   href="/events"
-                  className="inline-flex h-12 items-center justify-center rounded-xl bg-primary px-8 text-sm font-semibold text-primary-foreground shadow-lg shadow-primary/20 transition hover:brightness-95 active:scale-[0.99]"
+                  className="inline-flex h-12 items-center justify-center gap-2 rounded-xl bg-primary px-8 text-sm font-semibold text-primary-foreground shadow-lg shadow-primary/20 transition hover:brightness-95 active:scale-[0.99]"
                 >
+                  <ArrowRightIcon className="size-4" />
                   Browse events
                 </Link>
                 <Link
                   href="/dashboard"
-                  className="inline-flex h-12 items-center justify-center rounded-xl border border-border bg-card px-8 text-sm font-semibold transition hover:bg-muted active:scale-[0.99]"
+                  className="inline-flex h-12 items-center justify-center gap-2 rounded-xl border border-border bg-card px-8 text-sm font-semibold transition hover:bg-muted active:scale-[0.99]"
                 >
+                  <SparkIcon className="size-4" />
                   Organizer dashboard
                 </Link>
               </div>
@@ -290,13 +301,19 @@ export default async function Home() {
                 </p>
                 <div className="mt-8 space-y-3">
                   <div className="rounded-2xl bg-primary-foreground/10 p-4">
-                    <p className="text-sm font-semibold">No public guest list</p>
+                    <p className="inline-flex items-center gap-2 text-sm font-semibold">
+                      <LockIcon className="size-4" />
+                      No public guest list
+                    </p>
                     <p className="mt-1 text-xs text-primary-foreground/80">
                       Only the organizer can view attendees.
                     </p>
                   </div>
                   <div className="rounded-2xl bg-primary-foreground/10 p-4">
-                    <p className="text-sm font-semibold">Simple RSVP status</p>
+                    <p className="inline-flex items-center gap-2 text-sm font-semibold">
+                      <CheckCircleIcon className="size-4" />
+                      Simple RSVP status
+                    </p>
                     <p className="mt-1 text-xs text-primary-foreground/80">
                       Keep confirmations clear and consistent.
                     </p>
@@ -313,8 +330,9 @@ export default async function Home() {
                 </p>
                 <Link
                   href="/dashboard/events"
-                  className="mt-6 inline-flex h-10 items-center justify-center rounded-full border border-border bg-background px-5 text-sm font-semibold transition hover:bg-muted"
+                  className="mt-6 inline-flex h-10 items-center justify-center gap-2 rounded-full border border-border bg-background px-5 text-sm font-semibold transition hover:bg-muted"
                 >
+                  <CalendarIcon className="size-4" />
                   Manage events
                 </Link>
               </div>
@@ -329,13 +347,19 @@ export default async function Home() {
                 </p>
                 <div className="mt-8 grid gap-4 sm:grid-cols-2">
                   <div className="rounded-2xl border border-border bg-card p-6">
-                    <p className="text-sm font-semibold">Consistent layouts</p>
+                    <p className="inline-flex items-center gap-2 text-sm font-semibold">
+                      <SparkIcon className="size-4 text-primary" />
+                      Consistent layouts
+                    </p>
                     <p className="mt-2 text-xs leading-5 text-muted-foreground">
                       Pages look polished without extra effort.
                     </p>
                   </div>
                   <div className="rounded-2xl border border-border bg-card p-6">
-                    <p className="text-sm font-semibold">Readable by default</p>
+                    <p className="inline-flex items-center gap-2 text-sm font-semibold">
+                      <UserIcon className="size-4 text-primary" />
+                      Readable by default
+                    </p>
                     <p className="mt-2 text-xs leading-5 text-muted-foreground">
                       Clean typography and spacing for event content.
                     </p>
@@ -363,14 +387,16 @@ export default async function Home() {
                 <div className="mt-10 flex flex-col justify-center gap-4 sm:flex-row">
                   <Link
                     href="/events"
-                    className="inline-flex h-12 items-center justify-center rounded-2xl bg-primary px-10 text-sm font-semibold text-primary-foreground shadow-lg shadow-primary/20 transition hover:brightness-95"
+                    className="inline-flex h-12 items-center justify-center gap-2 rounded-2xl bg-primary px-10 text-sm font-semibold text-primary-foreground shadow-lg shadow-primary/20 transition hover:brightness-95"
                   >
+                    <ArrowRightIcon className="size-4" />
                     Explore events
                   </Link>
                   <Link
                     href="/signup"
-                    className="inline-flex h-12 items-center justify-center rounded-2xl border border-border bg-background px-10 text-sm font-semibold transition hover:bg-muted"
+                    className="inline-flex h-12 items-center justify-center gap-2 rounded-2xl border border-border bg-background px-10 text-sm font-semibold transition hover:bg-muted"
                   >
+                    <PlusIcon className="size-4" />
                     Create an account
                   </Link>
                 </div>

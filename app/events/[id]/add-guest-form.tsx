@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { MailIcon, SparkIcon, UserIcon } from "@/app/components/icons";
 
 export function AddGuestForm({ eventId }: { eventId: number }) {
   const router = useRouter();
@@ -56,30 +57,36 @@ export function AddGuestForm({ eventId }: { eventId: number }) {
           <label htmlFor="guest-name" className="text-sm font-medium">
             Full name <span className="text-destructive">*</span>
           </label>
-          <input
-            id="guest-name"
-            type="text"
-            required
-            placeholder="Your full name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            className="h-10 rounded-lg border border-input bg-background px-3 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
-          />
+          <div className="relative">
+            <UserIcon className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
+            <input
+              id="guest-name"
+              type="text"
+              required
+              placeholder="Your full name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              className="h-10 w-full rounded-lg border border-input bg-background py-2 pr-3 pl-9 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
+            />
+          </div>
         </div>
 
         <div className="grid gap-1.5">
           <label htmlFor="guest-email" className="text-sm font-medium">
             Email address <span className="text-destructive">*</span>
           </label>
-          <input
-            id="guest-email"
-            type="email"
-            required
-            placeholder="you@example.com"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="h-10 rounded-lg border border-input bg-background px-3 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
-          />
+          <div className="relative">
+            <MailIcon className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
+            <input
+              id="guest-email"
+              type="email"
+              required
+              placeholder="you@example.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="h-10 w-full rounded-lg border border-input bg-background py-2 pr-3 pl-9 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
+            />
+          </div>
         </div>
 
         {error && (
@@ -98,8 +105,9 @@ export function AddGuestForm({ eventId }: { eventId: number }) {
           <button
             type="submit"
             disabled={loading}
-            className="inline-flex h-10 items-center justify-center rounded-full bg-primary px-6 text-sm font-semibold text-primary-foreground transition hover:brightness-95 disabled:opacity-50"
+            className="inline-flex h-10 items-center justify-center gap-2 rounded-full bg-primary px-6 text-sm font-semibold text-primary-foreground transition hover:brightness-95 disabled:opacity-50"
           >
+            <SparkIcon className="size-4" />
             {loading ? "Submitting…" : "Submit RSVP"}
           </button>
         </div>

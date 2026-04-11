@@ -2,7 +2,7 @@ import Link from "next/link";
 import { cookies } from "next/headers";
 import { verifyJwt } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { CalendarIcon } from "./icons";
+import { ArrowRightIcon, CalendarIcon, LogoutIcon, UserIcon } from "./icons";
 import { Container } from "./container";
 import { ThemeToggle } from "./theme-toggle";
 
@@ -63,15 +63,17 @@ export async function SiteHeader() {
                 <div className="absolute right-0 mt-2 w-48 overflow-hidden rounded-2xl border border-border bg-background shadow-lg">
                   <Link
                     href="/dashboard"
-                    className="block px-4 py-2 text-sm font-medium transition hover:bg-muted"
+                    className="flex items-center gap-2 px-4 py-2 text-sm font-medium transition hover:bg-muted"
                   >
+                    <UserIcon className="size-4" />
                     Dashboard
                   </Link>
                   <form action="/api/auth/logout" method="post">
                     <button
                       type="submit"
-                      className="block w-full px-4 py-2 text-left text-sm font-medium text-rose-600 transition hover:bg-muted"
+                      className="flex w-full items-center gap-2 px-4 py-2 text-left text-sm font-medium text-rose-600 transition hover:bg-muted"
                     >
+                      <LogoutIcon className="size-4" />
                       Logout
                     </button>
                   </form>
@@ -80,8 +82,9 @@ export async function SiteHeader() {
             ) : (
               <Link
                 href="/signin"
-                className="inline-flex h-10 items-center rounded-full bg-primary px-4 text-sm font-semibold text-primary-foreground shadow-sm transition hover:brightness-95"
+                className="inline-flex h-10 items-center gap-2 rounded-full bg-primary px-4 text-sm font-semibold text-primary-foreground shadow-sm transition hover:brightness-95"
               >
+                <ArrowRightIcon className="size-4" />
                 Login
               </Link>
             )}

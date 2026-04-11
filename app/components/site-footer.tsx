@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Container } from "./container";
+import { CalendarIcon, LockIcon, SparkIcon } from "./icons";
 
 export function SiteFooter() {
   return (
@@ -18,7 +19,10 @@ export function SiteFooter() {
 
           <div className="grid grid-cols-2 gap-8 md:col-span-3 md:grid-cols-3">
             <div className="space-y-3">
-              <h3 className="text-sm font-semibold">Explore</h3>
+              <h3 className="inline-flex items-center gap-2 text-sm font-semibold">
+                <CalendarIcon className="size-4 text-primary" />
+                Explore
+              </h3>
               <ul className="space-y-2 text-sm text-muted-foreground">
                 <li>
                   <Link className="hover:text-foreground" href="/events">
@@ -39,7 +43,10 @@ export function SiteFooter() {
             </div>
 
             <div className="space-y-3">
-              <h3 className="text-sm font-semibold">Product</h3>
+              <h3 className="inline-flex items-center gap-2 text-sm font-semibold">
+                <SparkIcon className="size-4 text-primary" />
+                Product
+              </h3>
               <ul className="space-y-2 text-sm text-muted-foreground">
                 <li>
                   <Link className="hover:text-foreground" href="/#faq">
@@ -55,7 +62,10 @@ export function SiteFooter() {
             </div>
 
             <div className="space-y-3">
-              <h3 className="text-sm font-semibold">Legal</h3>
+              <h3 className="inline-flex items-center gap-2 text-sm font-semibold">
+                <LockIcon className="size-4 text-primary" />
+                Legal
+              </h3>
               <ul className="space-y-2 text-sm text-muted-foreground">
                 <li>
                   <Link className="hover:text-foreground" href="/privacy">

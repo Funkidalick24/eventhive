@@ -3,6 +3,13 @@ import { cookies } from "next/headers";
 import { verifyJwt } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { Container } from "../components/container";
+import {
+  ArrowRightIcon,
+  CalendarIcon,
+  ClockIcon,
+  MapPinIcon,
+  PlusIcon,
+} from "../components/icons";
 import { EventSearch } from "./event-search";
 import {
   formatHHMMToLocale,
@@ -68,9 +75,10 @@ export default async function EventsPage({
             {isAuthenticated && (
               <Link
                 href="/dashboard/events/new"
-                className="mt-2 inline-flex h-10 items-center rounded-full bg-primary px-5 text-sm font-semibold text-primary-foreground shadow-sm transition hover:brightness-95"
+                className="mt-2 inline-flex h-10 items-center gap-2 rounded-full bg-primary px-5 text-sm font-semibold text-primary-foreground shadow-sm transition hover:brightness-95"
               >
-                + Create event
+                <PlusIcon className="size-4" />
+                Create event
               </Link>
             )}
           </div>
@@ -98,8 +106,9 @@ export default async function EventsPage({
               {!isAuthenticated ? (
                 <Link
                   href="/signin"
-                  className="mt-5 inline-flex h-10 items-center rounded-full bg-primary px-5 text-sm font-semibold text-primary-foreground shadow-sm transition hover:brightness-95"
+                  className="mt-5 inline-flex h-10 items-center gap-2 rounded-full bg-primary px-5 text-sm font-semibold text-primary-foreground shadow-sm transition hover:brightness-95"
                 >
+                  <ArrowRightIcon className="size-4" />
                   Sign in
                 </Link>
               ) : null}
@@ -118,9 +127,9 @@ export default async function EventsPage({
                   <p className="mt-2 text-sm text-muted-foreground line-clamp-2">
                     {getEventTeaser(event.description, event.location)}
                   </p>
-                  <div className="mt-2 flex flex-wrap gap-3 text-xs text-muted-foreground">
-                    <span>
-                      {"Date: "}
+                  <div className="mt-2 flex flex-wrap gap-2 text-xs text-muted-foreground">
+                    <span className="inline-flex items-center gap-1 rounded-full bg-muted px-2 py-1">
+                      <CalendarIcon className="size-3.5" />
                       {(parseYYYYMMDDToLocalDate(event.date) ?? new Date(event.date)).toLocaleDateString(
                         "en-US",
                         {
@@ -131,15 +140,20 @@ export default async function EventsPage({
                       )}
                     </span>
                     {event.time && (
-                      <span>
-                        {"Time: "}
+                      <span className="inline-flex items-center gap-1 rounded-full bg-muted px-2 py-1">
+                        <ClockIcon className="size-3.5" />
                         {formatHHMMToLocale(event.time)}
                       </span>
                     )}
-                    {event.location && <span>{"Location: "}{event.location}</span>}
+                    {event.location && (
+                      <span className="inline-flex items-center gap-1 rounded-full bg-muted px-2 py-1">
+                        <MapPinIcon className="size-3.5" />
+                        {event.location}
+                      </span>
+                    )}
                   </div>
-                  <p className="mt-4 text-xs font-semibold text-primary">
-                    View guests &rarr;
+                  <p className="mt-4 inline-flex items-center gap-1 text-xs font-semibold text-primary">
+                    View guests <ArrowRightIcon className="size-3.5" />
                   </p>
                 </Link>
               ))}

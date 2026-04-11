@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { FormEvent, useState } from "react";
 import { Container } from "../components/container";
+import { EyeIcon, EyeOffIcon, LockIcon, MailIcon, UserIcon } from "../components/icons";
 
 export default function SignupPage() {
   const router = useRouter();
@@ -75,28 +76,35 @@ export default function SignupPage() {
           <form className="mt-6 space-y-4" onSubmit={handleSubmit}>
             <label className="block space-y-2">
               <span className="text-sm font-medium">Name</span>
-              <input
-                name="name"
-                required
-                placeholder="Alex Johnson"
-                className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm"
-              />
+              <div className="relative">
+                <UserIcon className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
+                <input
+                  name="name"
+                  required
+                  placeholder="Alex Johnson"
+                  className="w-full rounded-lg border border-border bg-background py-2 pr-3 pl-9 text-sm"
+                />
+              </div>
             </label>
 
             <label className="block space-y-2">
               <span className="text-sm font-medium">Email</span>
-              <input
-                type="email"
-                name="email"
-                required
-                placeholder="alex@company.com"
-                className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm"
-              />
+              <div className="relative">
+                <MailIcon className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
+                <input
+                  type="email"
+                  name="email"
+                  required
+                  placeholder="alex@company.com"
+                  className="w-full rounded-lg border border-border bg-background py-2 pr-3 pl-9 text-sm"
+                />
+              </div>
             </label>
 
             <label className="block space-y-2">
               <span className="text-sm font-medium">Password</span>
               <div className="relative">
+                <LockIcon className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
                 <input
                   type={showPassword ? "text" : "password"}
                   name="password"
@@ -105,14 +113,14 @@ export default function SignupPage() {
                   value={password}
                   onChange={(event) => setPassword(event.target.value)}
                   placeholder="At least 8 characters"
-                  className="w-full rounded-lg border border-border bg-background px-3 py-2 pr-16 text-sm"
+                  className="w-full rounded-lg border border-border bg-background py-2 pr-10 pl-9 text-sm"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword((current) => !current)}
-                  className="absolute inset-y-0 right-2 my-auto h-7 rounded-md px-2 text-xs font-medium text-muted-foreground transition hover:bg-muted hover:text-foreground"
+                  className="absolute inset-y-0 right-2 my-auto grid size-7 place-items-center rounded-md text-muted-foreground transition hover:bg-muted hover:text-foreground"
                 >
-                  {showPassword ? "Hide" : "Show"}
+                  {showPassword ? <EyeOffIcon className="size-4" /> : <EyeIcon className="size-4" />}
                 </button>
               </div>
               <span className="text-xs text-muted-foreground">
@@ -123,6 +131,7 @@ export default function SignupPage() {
             <label className="block space-y-2">
               <span className="text-sm font-medium">Confirm password</span>
               <div className="relative">
+                <LockIcon className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
                 <input
                   type={showConfirmPassword ? "text" : "password"}
                   name="confirmPassword"
@@ -131,16 +140,20 @@ export default function SignupPage() {
                   value={confirmPassword}
                   onChange={(event) => setConfirmPassword(event.target.value)}
                   placeholder="Re-enter your password"
-                  className={`w-full rounded-lg border bg-background px-3 py-2 pr-16 text-sm ${
+                  className={`w-full rounded-lg border bg-background py-2 pr-10 pl-9 text-sm ${
                     passwordsDoNotMatch ? "border-rose-500" : "border-border"
                   }`}
                 />
                 <button
                   type="button"
                   onClick={() => setShowConfirmPassword((current) => !current)}
-                  className="absolute inset-y-0 right-2 my-auto h-7 rounded-md px-2 text-xs font-medium text-muted-foreground transition hover:bg-muted hover:text-foreground"
+                  className="absolute inset-y-0 right-2 my-auto grid size-7 place-items-center rounded-md text-muted-foreground transition hover:bg-muted hover:text-foreground"
                 >
-                  {showConfirmPassword ? "Hide" : "Show"}
+                  {showConfirmPassword ? (
+                    <EyeOffIcon className="size-4" />
+                  ) : (
+                    <EyeIcon className="size-4" />
+                  )}
                 </button>
               </div>
               {passwordsDoNotMatch ? (

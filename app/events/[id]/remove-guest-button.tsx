@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { TrashIcon, XCircleIcon } from "@/app/components/icons";
 
 export function RemoveGuestButton({ guestId }: { guestId: number }) {
   const router = useRouter();
@@ -31,15 +32,17 @@ export function RemoveGuestButton({ guestId }: { guestId: number }) {
         <button
           onClick={handleRemove}
           disabled={loading}
-          className="rounded-full bg-destructive px-3 py-1 text-xs font-semibold text-destructive-foreground transition hover:brightness-95 disabled:opacity-50"
+          className="inline-flex items-center gap-1 rounded-full bg-destructive px-3 py-1 text-xs font-semibold text-destructive-foreground transition hover:brightness-95 disabled:opacity-50"
         >
+          <TrashIcon className="size-3.5" />
           {loading ? "Removing…" : "Confirm"}
         </button>
         <button
           onClick={() => setConfirming(false)}
           disabled={loading}
-          className="rounded-full border border-border px-3 py-1 text-xs font-semibold transition hover:bg-muted disabled:opacity-50"
+          className="inline-flex items-center gap-1 rounded-full border border-border px-3 py-1 text-xs font-semibold transition hover:bg-muted disabled:opacity-50"
         >
+          <XCircleIcon className="size-3.5" />
           Cancel
         </button>
       </div>
@@ -49,9 +52,10 @@ export function RemoveGuestButton({ guestId }: { guestId: number }) {
   return (
     <button
       onClick={() => setConfirming(true)}
-      className="rounded-full border border-destructive/30 px-3 py-1 text-xs font-semibold text-destructive transition hover:bg-destructive/10"
+      className="inline-flex items-center gap-1 rounded-full border border-destructive/30 px-3 py-1 text-xs font-semibold text-destructive transition hover:bg-destructive/10"
       title="Remove guest"
     >
+      <TrashIcon className="size-3.5" />
       Remove
     </button>
   );

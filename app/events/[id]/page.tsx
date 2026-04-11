@@ -10,6 +10,14 @@ import {
 } from "@/lib/date";
 import { parseScheduleCardsForDisplay } from "@/lib/schedule";
 import { Container } from "@/app/components/container";
+import {
+  ArrowLeftIcon,
+  ArrowRightIcon,
+  CalendarIcon,
+  ClockIcon,
+  EditIcon,
+  MapPinIcon,
+} from "@/app/components/icons";
 import { AddGuestForm } from "./add-guest-form";
 import { RemoveGuestButton } from "./remove-guest-button";
 import { RsvpStatusSelect } from "./rsvp-status-select";
@@ -64,25 +72,40 @@ export default async function EventDetailPage({
           <header className="rounded-2xl border border-border bg-card p-6 md:p-8">
             <Link
               href="/events"
-              className="text-sm font-medium text-primary hover:underline"
+              className="inline-flex items-center gap-1 text-sm font-medium text-primary hover:underline"
             >
-              ← Back to events
+              <ArrowLeftIcon className="size-4" />
+              Back to events
             </Link>
             <h1 className="mt-3 font-heading text-3xl font-semibold tracking-tight md:text-4xl">
               {event.name}
             </h1>
             <div className="mt-3 flex flex-wrap gap-4 text-sm text-muted-foreground">
-              <span>📅 {formattedDate}</span>
-              {event.time && <span>⏰ {formatHHMMToLocale(event.time)}</span>}
-              {event.location && <span>📍 {event.location}</span>}
+              <span className="inline-flex items-center gap-1">
+                <CalendarIcon className="size-4" />
+                {formattedDate}
+              </span>
+              {event.time && (
+                <span className="inline-flex items-center gap-1">
+                  <ClockIcon className="size-4" />
+                  {formatHHMMToLocale(event.time)}
+                </span>
+              )}
+              {event.location && (
+                <span className="inline-flex items-center gap-1">
+                  <MapPinIcon className="size-4" />
+                  {event.location}
+                </span>
+              )}
             </div>
 
             {isOwner && (
               <div className="mt-5 flex flex-wrap gap-3 border-t border-border pt-5">
                 <Link
                   href={`/dashboard/events/${eventId}/edit`}
-                  className="inline-flex h-10 items-center justify-center rounded-full bg-primary px-5 text-sm font-semibold text-primary-foreground transition hover:brightness-95"
+                  className="inline-flex h-10 items-center justify-center gap-2 rounded-full bg-primary px-5 text-sm font-semibold text-primary-foreground transition hover:brightness-95"
                 >
+                  <EditIcon className="size-4" />
                   Manage in dashboard
                 </Link>
               </div>
@@ -186,8 +209,9 @@ export default async function EventDetailPage({
               <p className="text-sm text-muted-foreground">
                 <Link
                   href="/signin"
-                  className="font-semibold text-primary hover:underline"
+                  className="inline-flex items-center gap-1 font-semibold text-primary hover:underline"
                 >
+                  <ArrowRightIcon className="size-4" />
                   Sign in
                 </Link>{" "}
                 to RSVP to this event.

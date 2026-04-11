@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
+import { PlusIcon, SparkIcon, TrashIcon } from "@/app/components/icons";
 
 type TaskItem = {
   id: number;
@@ -147,7 +148,8 @@ export function TaskManager({ eventId, initialTasks }: Props) {
       </p>
       <div className="mt-4 space-y-2 rounded-xl border border-border bg-background px-4 py-3">
         <div className="flex items-center justify-between gap-3">
-          <p className="text-sm font-medium text-foreground">
+          <p className="inline-flex items-center gap-1 text-sm font-medium text-foreground">
+            <SparkIcon className="size-4" />
             Progress: {completedCount}/{totalCount} tasks
           </p>
           <p className="text-sm font-semibold text-primary">{progressPercent}%</p>
@@ -173,8 +175,9 @@ export function TaskManager({ eventId, initialTasks }: Props) {
         <button
           type="submit"
           disabled={submitting}
-          className="inline-flex h-10 items-center justify-center rounded-full bg-primary px-5 text-sm font-semibold text-primary-foreground transition hover:brightness-95 disabled:opacity-50"
+          className="inline-flex h-10 items-center justify-center gap-2 rounded-full bg-primary px-5 text-sm font-semibold text-primary-foreground transition hover:brightness-95 disabled:opacity-50"
         >
+          <PlusIcon className="size-4" />
           {submitting ? "Adding..." : "Add task"}
         </button>
       </form>
@@ -219,9 +222,7 @@ export function TaskManager({ eventId, initialTasks }: Props) {
                 className="rounded-full p-1 text-muted-foreground transition hover:bg-destructive/10 hover:text-destructive disabled:opacity-50"
                 title="Delete task"
               >
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/>
-                </svg>
+                <TrashIcon className="size-4" />
               </button>
             </div>
           ))}

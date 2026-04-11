@@ -3,6 +3,16 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { ScheduleCard, serializeScheduleCards } from "@/lib/schedule";
+import {
+  CalendarIcon,
+  ClockIcon,
+  EditIcon,
+  MapPinIcon,
+  PlusIcon,
+  SparkIcon,
+  TrashIcon,
+  XCircleIcon,
+} from "@/app/components/icons";
 
 export function CreateEventForm({ cancelHref = "/dashboard/events" }: { cancelHref?: string }) {
   const router = useRouter();
@@ -98,55 +108,67 @@ export function CreateEventForm({ cancelHref = "/dashboard/events" }: { cancelHr
         <label htmlFor="event-date" className="text-sm font-medium">
           Date <span className="text-destructive">*</span>
         </label>
-        <input
-          id="event-date"
-          type="date"
-          required
-          value={date}
-          onChange={(e) => setDate(e.target.value)}
-          className="h-10 rounded-lg border border-input bg-background px-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
-        />
+        <div className="relative">
+          <CalendarIcon className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
+          <input
+            id="event-date"
+            type="date"
+            required
+            value={date}
+            onChange={(e) => setDate(e.target.value)}
+            className="h-10 w-full rounded-lg border border-input bg-background py-2 pr-3 pl-9 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
+          />
+        </div>
       </div>
 
       <div className="grid gap-1.5">
         <label htmlFor="event-time" className="text-sm font-medium">
           Time
         </label>
-        <input
-          id="event-time"
-          type="time"
-          value={time}
-          onChange={(e) => setTime(e.target.value)}
-          className="h-10 rounded-lg border border-input bg-background px-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
-        />
+        <div className="relative">
+          <ClockIcon className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
+          <input
+            id="event-time"
+            type="time"
+            value={time}
+            onChange={(e) => setTime(e.target.value)}
+            className="h-10 w-full rounded-lg border border-input bg-background py-2 pr-3 pl-9 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
+          />
+        </div>
       </div>
 
       <div className="grid gap-1.5">
         <label htmlFor="event-location" className="text-sm font-medium">
           Location
         </label>
-        <input
-          id="event-location"
-          type="text"
-          placeholder="Innovation Hub, Room 204"
-          value={location}
-          onChange={(e) => setLocation(e.target.value)}
-          className="h-10 rounded-lg border border-input bg-background px-3 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
-        />
+        <div className="relative">
+          <MapPinIcon className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
+          <input
+            id="event-location"
+            type="text"
+            placeholder="Innovation Hub, Room 204"
+            value={location}
+            onChange={(e) => setLocation(e.target.value)}
+            className="h-10 w-full rounded-lg border border-input bg-background py-2 pr-3 pl-9 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
+          />
+        </div>
       </div>
 
       <div className="grid gap-1.5">
         <label htmlFor="event-description" className="text-sm font-medium">
           About / details
         </label>
-        <textarea
-          id="event-description"
-          rows={3}
-          placeholder="A 90-minute meetup with a short talk, demos, and networking."
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-          className="rounded-lg border border-input bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 resize-none"
-        />
+        <div className="relative">
+          <EditIcon className="pointer-events-none absolute top-3 left-3 size-4 text-muted-foreground" />
+          <textarea
+            id="event-description"
+            rows={3}
+            placeholder="A 90-minute meetup with a short talk, demos, and networking."
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            className="w-full rounded-lg border border-input bg-background py-2 pr-3 pl-9 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 resize-none"
+          />
+        </div>
       </div>
 
       <div className="grid gap-1.5">
@@ -215,8 +237,9 @@ export function CreateEventForm({ cancelHref = "/dashboard/events" }: { cancelHr
                   <button
                     type="button"
                     onClick={() => removeCard(index)}
-                    className="inline-flex h-8 items-center rounded-full border border-border px-3 text-xs font-semibold transition hover:bg-muted"
+                    className="inline-flex h-8 items-center gap-1 rounded-full border border-border px-3 text-xs font-semibold transition hover:bg-muted"
                   >
+                    <TrashIcon className="size-3.5" />
                     Remove card
                   </button>
                 </div>
@@ -227,9 +250,9 @@ export function CreateEventForm({ cancelHref = "/dashboard/events" }: { cancelHr
         <button
           type="button"
           onClick={addCard}
-          className="mt-1 inline-flex h-9 w-fit items-center rounded-full border border-border px-4 text-sm font-semibold transition hover:bg-muted"
+          className="mt-1 inline-flex h-9 w-fit items-center gap-2 rounded-full border border-border px-4 text-sm font-semibold transition hover:bg-muted"
         >
-          + Add time card
+          <PlusIcon className="size-4" /> Add time card
         </button>
       </div>
 
@@ -243,16 +266,18 @@ export function CreateEventForm({ cancelHref = "/dashboard/events" }: { cancelHr
         <button
           type="submit"
           disabled={loading}
-          className="inline-flex h-10 items-center justify-center rounded-full bg-primary px-6 text-sm font-semibold text-primary-foreground transition hover:brightness-95 disabled:opacity-50"
+          className="inline-flex h-10 items-center justify-center gap-2 rounded-full bg-primary px-6 text-sm font-semibold text-primary-foreground transition hover:brightness-95 disabled:opacity-50"
         >
+          <SparkIcon className="size-4" />
           {loading ? "Creating…" : "Create event"}
         </button>
         <button
           type="button"
           onClick={() => router.push(cancelHref)}
           disabled={loading}
-          className="inline-flex h-10 items-center justify-center rounded-full border border-border px-6 text-sm font-semibold transition hover:bg-muted disabled:opacity-50"
+          className="inline-flex h-10 items-center justify-center gap-2 rounded-full border border-border px-6 text-sm font-semibold transition hover:bg-muted disabled:opacity-50"
         >
+          <XCircleIcon className="size-4" />
           Cancel
         </button>
       </div>

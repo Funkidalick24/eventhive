@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { FormEvent, useEffect, useState } from "react";
-import { GoogleIcon } from "../components/icons";
+import { EyeIcon, EyeOffIcon, GoogleIcon, LockIcon, MailIcon } from "../components/icons";
 
 type SessionUser = {
   id: number;
@@ -167,31 +167,35 @@ export function SigninClient() {
         <form className="space-y-4" onSubmit={handleSubmit}>
           <label className="block space-y-2">
             <span className="text-sm font-medium">Email</span>
-            <input
-              type="email"
-              name="email"
-              required
-              placeholder="name@school.edu"
-              className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm"
-            />
+            <div className="relative">
+              <MailIcon className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
+              <input
+                type="email"
+                name="email"
+                required
+                placeholder="name@school.edu"
+                className="w-full rounded-lg border border-border bg-background py-2 pr-3 pl-9 text-sm"
+              />
+            </div>
           </label>
 
           <label className="block space-y-2">
             <span className="text-sm font-medium">Password</span>
             <div className="relative">
+              <LockIcon className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
               <input
                 type={showPassword ? "text" : "password"}
                 name="password"
                 required
                 placeholder="Your password"
-                className="w-full rounded-lg border border-border bg-background px-3 py-2 pr-16 text-sm"
+                className="w-full rounded-lg border border-border bg-background py-2 pr-10 pl-9 text-sm"
               />
               <button
                 type="button"
                 onClick={() => setShowPassword((current) => !current)}
-                className="absolute inset-y-0 right-2 my-auto h-7 rounded-md px-2 text-xs font-medium text-muted-foreground transition hover:bg-muted hover:text-foreground"
+                className="absolute inset-y-0 right-2 my-auto grid size-7 place-items-center rounded-md text-muted-foreground transition hover:bg-muted hover:text-foreground"
               >
-                {showPassword ? "Hide" : "Show"}
+                {showPassword ? <EyeOffIcon className="size-4" /> : <EyeIcon className="size-4" />}
               </button>
             </div>
           </label>

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { AlertTriangleIcon, TrashIcon, XCircleIcon } from "@/app/components/icons";
 
 export function DeleteEventButton({
   eventId,
@@ -49,19 +50,24 @@ export function DeleteEventButton({
   if (confirming) {
     return (
       <div className="flex items-center gap-3">
-        <span className="text-sm text-muted-foreground">Are you sure?</span>
+        <span className="inline-flex items-center gap-1 text-sm text-muted-foreground">
+          <AlertTriangleIcon className="size-4" />
+          Are you sure?
+        </span>
         <button
           onClick={handleDelete}
           disabled={loading}
-          className="inline-flex h-9 items-center justify-center rounded-full bg-destructive px-4 text-sm font-semibold text-destructive-foreground transition hover:brightness-95 disabled:opacity-50"
+          className="inline-flex h-9 items-center justify-center gap-2 rounded-full bg-destructive px-4 text-sm font-semibold text-destructive-foreground transition hover:brightness-95 disabled:opacity-50"
         >
+          <TrashIcon className="size-4" />
           {loading ? "Deleting…" : "Yes, delete"}
         </button>
         <button
           onClick={() => setConfirming(false)}
           disabled={loading}
-          className="inline-flex h-9 items-center justify-center rounded-full border border-border px-4 text-sm font-semibold transition hover:bg-muted disabled:opacity-50"
+          className="inline-flex h-9 items-center justify-center gap-2 rounded-full border border-border px-4 text-sm font-semibold transition hover:bg-muted disabled:opacity-50"
         >
+          <XCircleIcon className="size-4" />
           Cancel
         </button>
       </div>
@@ -71,8 +77,9 @@ export function DeleteEventButton({
   return (
     <button
       onClick={() => setConfirming(true)}
-      className="inline-flex h-10 items-center justify-center rounded-full border border-destructive/30 px-5 text-sm font-semibold text-destructive transition hover:bg-destructive/10"
+      className="inline-flex h-10 items-center justify-center gap-2 rounded-full border border-destructive/30 px-5 text-sm font-semibold text-destructive transition hover:bg-destructive/10"
     >
+      <TrashIcon className="size-4" />
       Delete event
     </button>
   );

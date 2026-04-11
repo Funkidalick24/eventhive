@@ -1,6 +1,14 @@
 import Link from "next/link";
 import { Container } from "../components/container";
 import { prisma } from "@/lib/prisma";
+import {
+  ArrowLeftIcon,
+  CalendarIcon,
+  CheckCircleIcon,
+  PlusIcon,
+  SparkIcon,
+  UserIcon,
+} from "../components/icons";
 
 type OrganizerCardItem = Awaited<
   ReturnType<typeof prisma.organizerCard.findMany>
@@ -28,8 +36,9 @@ export default async function OrganizersPage() {
             <div className="pt-2">
               <Link
                 href="/"
-                className="inline-flex h-10 items-center rounded-full border border-border bg-card px-4 text-sm font-medium shadow-sm transition hover:bg-muted"
+                className="inline-flex h-10 items-center gap-2 rounded-full border border-border bg-card px-4 text-sm font-medium shadow-sm transition hover:bg-muted"
               >
+                <ArrowLeftIcon className="size-4" />
                 Back to home
               </Link>
             </div>
@@ -51,21 +60,22 @@ export default async function OrganizersPage() {
 
             <ol className="grid gap-4 md:grid-cols-5">
               {[
-                "Create event",
-                "Set RSVP",
-                "Publish",
-                "Check-in",
-                "Post-event follow-up",
+                { label: "Create event", Icon: PlusIcon },
+                { label: "Set RSVP", Icon: UserIcon },
+                { label: "Publish", Icon: SparkIcon },
+                { label: "Check-in", Icon: CheckCircleIcon },
+                { label: "Post-event follow-up", Icon: CalendarIcon },
               ].map((step, index) => (
                 <li
-                  key={step}
+                  key={step.label}
                   className="rounded-2xl border border-border bg-background/60 p-5 shadow-sm backdrop-blur"
                 >
                   <p className="text-sm font-semibold text-primary">
                     Step {index + 1}
                   </p>
-                  <p className="mt-1 font-heading text-lg font-semibold tracking-tight">
-                    {step}
+                  <p className="mt-1 inline-flex items-center gap-2 font-heading text-lg font-semibold tracking-tight">
+                    <step.Icon className="size-4 text-primary" />
+                    {step.label}
                   </p>
                 </li>
               ))}
