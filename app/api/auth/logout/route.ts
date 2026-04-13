@@ -1,9 +1,12 @@
 import { NextResponse } from "next/server";
 
+import { getAppOrigin } from "@/lib/app-base-url";
+
 const SESSION_COOKIE = "eventhive_session";
 
 function buildLogoutResponse(request: Request) {
-  const response = NextResponse.redirect(new URL("/", request.url));
+  const origin = getAppOrigin(request.url);
+  const response = NextResponse.redirect(new URL("/", origin));
 
   response.cookies.set({
     name: SESSION_COOKIE,

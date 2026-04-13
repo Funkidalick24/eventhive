@@ -1,26 +1,14 @@
 import { OAuth2Client } from "google-auth-library";
 
+import { getAppOrigin } from "@/lib/app-base-url";
+
 export type GoogleOauthCookiePayload = {
   state: string;
   role?: string | null;
 };
 
-function getConfiguredBaseOrigin() {
-  const raw = process.env.APP_BASE_URL?.trim();
-  if (!raw) return null;
-
-  const normalized = raw.replace(/\/+$/, "");
-
-  try {
-    return new URL(normalized).origin;
-  } catch {
-    return null;
-  }
-}
-
 export function getGoogleOAuthConfig(requestUrl: string) {
-  const url = new URL(requestUrl);
-  const origin = getConfiguredBaseOrigin() ?? url.origin;
+  const origin = getAppOrigin(requestUrl);
 
   const clientId = process.env.GOOGLE_CLIENT_ID ?? "";
   const clientSecret = process.env.GOOGLE_CLIENT_SECRET ?? "";
@@ -64,5 +52,3 @@ export async function verifyGoogleIdToken(input: {
     emailVerified: payload?.email_verified ?? null,
   };
 }
-
-
