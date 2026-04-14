@@ -43,6 +43,15 @@ export function sanitizeEmail(value: unknown) {
 }
 
 export function sanitizeInteger(value: unknown) {
+  if (typeof value === "number") {
+    return Number.isInteger(value) ? value : null;
+  }
+
+  if (typeof value === "bigint") {
+    const asNumber = Number(value);
+    return Number.isSafeInteger(asNumber) ? asNumber : null;
+  }
+
   const normalized = sanitizeString(value, { trim: true, maxLength: 20 });
   if (!normalized) return null;
   const parsed = Number(normalized);
