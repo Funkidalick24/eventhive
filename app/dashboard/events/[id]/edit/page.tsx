@@ -7,6 +7,7 @@ import { Container } from "@/app/components/container";
 import { EditEventForm } from "@/app/events/[id]/edit/edit-event-form";
 import { DeleteEventButton } from "@/app/events/[id]/delete-event-button";
 import { TaskManager } from "./task-manager";
+import { RsvpManager } from "./rsvp-manager";
 
 export default async function DashboardEditEventPage({
   params,
@@ -36,11 +37,15 @@ export default async function DashboardEditEventPage({
     where: { event_id: eventId },
     orderBy: { created_at: "asc" },
   });
+  const guests = await prisma.guest.findMany({
+    where: { event_id: eventId },
+    orderBy: { created_at: "asc" },
+  });
 
   return (
     <main className="py-14 md:py-20">
       <Container>
-        <div className="mx-auto max-w-xl space-y-6">
+        <div className="mx-auto max-w-4xl space-y-6">
           <header>
             <Link
               href="/dashboard/events"
@@ -78,6 +83,16 @@ export default async function DashboardEditEventPage({
               id: task.id,
               title: task.title,
               is_completed: task.is_completed,
+            }))}
+          />
+
+          <RsvpManager
+            eventId={eventId}
+            initialGuests={guests.map((guest) => ({
+              id: guest.id,
+              name: guest.name,
+              email: guest.email,
+              rsvp_status: guest.rsvp_status,
             }))}
           />
         </div>

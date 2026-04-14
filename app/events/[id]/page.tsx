@@ -15,12 +15,9 @@ import {
   ArrowRightIcon,
   CalendarIcon,
   ClockIcon,
-  EditIcon,
   MapPinIcon,
 } from "@/app/components/icons";
 import { AddGuestForm } from "./add-guest-form";
-import { RemoveGuestButton } from "./remove-guest-button";
-import { RsvpStatusSelect } from "./rsvp-status-select";
 
 export default async function EventDetailPage({
   params,
@@ -46,13 +43,6 @@ export default async function EventDetailPage({
   const payload = token ? verifyJwt(token) : null;
   const isAuthenticated = !!payload;
   const isOwner = payload?.sub === event.organizer_id;
-
-  const guests = isOwner
-    ? await prisma.guest.findMany({
-        where: { event_id: eventId },
-        orderBy: { created_at: "asc" },
-      })
-    : [];
 
   const formattedDate = (
     parseYYYYMMDDToLocalDate(event.date) ?? new Date(event.date)
@@ -105,8 +95,8 @@ export default async function EventDetailPage({
                   href={`/dashboard/events/${eventId}/edit`}
                   className="inline-flex h-10 items-center justify-center gap-2 rounded-full bg-primary px-5 text-sm font-semibold text-primary-foreground transition hover:brightness-95"
                 >
-                  <EditIcon className="size-4" />
-                  Manage in dashboard
+                  <ArrowRightIcon className="size-4" />
+                  Manage event and RSVPs
                 </Link>
               </div>
             )}
@@ -159,43 +149,6 @@ export default async function EventDetailPage({
                       {scheduleDisplay.fallbackText}
                     </p>
                   )}
-                </div>
-              )}
-            </section>
-          )}
-
-          {/* Guest list — visible only to the event owner */}
-          {isOwner && (
-            <section className="rounded-2xl border border-border bg-card p-6 md:p-8">
-              <div className="flex items-center justify-between gap-3">
-                <h2 className="font-heading text-xl font-semibold tracking-tight">
-                  Guest list
-                </h2>
-                <span className="rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold text-primary">
-                  {guests.length} {guests.length === 1 ? "guest" : "guests"}
-                </span>
-              </div>
-              {guests.length === 0 ? (
-                <p className="mt-4 text-sm text-muted-foreground">
-                  No RSVPs yet. Share the event link to get people to sign up.
-                </p>
-              ) : (
-                <div className="mt-4 divide-y divide-border overflow-hidden rounded-xl border border-border">
-                  {guests.map((guest: { id: number; name: string; email: string; rsvp_status: string }) => (
-                    <div
-                      key={guest.id}
-                      className="flex items-center justify-between gap-4 bg-background px-4 py-3"
-                    >
-                      <div className="min-w-0">
-                        <p className="truncate text-sm font-medium">{guest.name}</p>
-                        <p className="truncate text-xs text-muted-foreground">{guest.email}</p>
-                      </div>
-                      <div className="flex shrink-0 items-center gap-3">
-                        <RsvpStatusSelect guestId={guest.id} currentStatus={guest.rsvp_status} />
-                        <RemoveGuestButton guestId={guest.id} />
-                      </div>
-                    </div>
-                  ))}
                 </div>
               )}
             </section>

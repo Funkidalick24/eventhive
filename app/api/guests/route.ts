@@ -167,11 +167,12 @@ export async function PATCH(request: NextRequest) {
   }
 
   const guestId = sanitizeInteger(body.guestId);
+  const eventId = sanitizeInteger(body.eventId);
   const rsvpStatus = sanitizeString(body.rsvp_status, { maxLength: 20 });
 
-  if (guestId === null) {
+  if (guestId === null && eventId === null) {
     return NextResponse.json(
-      { error: "guestId is required" },
+      { error: "guestId or eventId is required" },
       { status: 400 }
     );
   }
@@ -183,7 +184,27 @@ export async function PATCH(request: NextRequest) {
     );
   }
 
-  const guest = await prisma.guest.findUnique({ where: { id: guestId } });
+  if (eventId !== null && guestId === null) {
+    const eventForBulkUpdate = await prisma.event.findUnique({
+      where: { id: eventId },
+    });
+    if (!eventForBulkUpdate) {
+      return NextResponse.json({ error: "Event not found" }, { status: 404 });
+    }
+
+    if (eventForBulkUpdate.organizer_id !== payload.sub) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
+
+    const result = await prisma.guest.updateMany({
+      where: { event_id: eventId, rsvp_status: { not: rsvpStatus } },
+      data: { rsvp_status: rsvpStatus },
+    });
+
+    return NextResponse.json({ updated_count: result.count });
+  }
+
+  const guest = await prisma.guest.findUnique({ where: { id: guestId! } });
   if (!guest) {
     return NextResponse.json({ error: "Guest not found" }, { status: 404 });
   }
@@ -198,7 +219,7 @@ export async function PATCH(request: NextRequest) {
   }
 
   const updatedGuest = await prisma.guest.update({
-    where: { id: guestId },
+    where: { id: guestId! },
     data: { rsvp_status: rsvpStatus },
   });
 
