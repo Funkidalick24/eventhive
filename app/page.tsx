@@ -284,7 +284,7 @@ export default async function Home() {
                     ) : (
                       <div className="rounded-xl border border-dashed border-border bg-card px-4 py-3">
                         <p className="text-sm text-muted-foreground">
-                          Add schedule cards in your dashboard event editor to populate this section.
+                          The closest event doesn't have a schedule yet.
                         </p>
                       </div>
                     )}
